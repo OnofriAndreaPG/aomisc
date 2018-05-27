@@ -1,14 +1,14 @@
 {
     "collab_server" : "",
-    "contents" : "johnsonGrass <- read.csv(\"Johnsongrass.csv\", header=T)\nsave(johnsonGrass, file=\"Johnsongrass.rda\")\n",
+    "contents" : "johnsonGrass <- read.csv(\"Johnsongrass.csv\", header=T)\njohnsonGrass <- johnsonGrass[1:72,]\nsave(johnsonGrass, file=\"Johnsongrass.rda\")\n\nlibrary(devtools)\ninstall_github(\"OnofriAndreaPG/aomisc\")\njohnsonGrass\ndata(mixture)\nmixture\n",
     "created" : 1527435849265.000,
-    "dirty" : false,
+    "dirty" : true,
     "encoding" : "UTF-8",
     "folds" : "",
-    "hash" : "2133653404",
+    "hash" : "3297288751",
     "id" : "4A508722",
     "lastKnownWriteTime" : 1527436120,
-    "last_content_update" : 1527436120535,
+    "last_content_update" : 1527437175218,
     "path" : "~/Documents/_DBXAndrea/Dropbox/_Lavoro/__Notes/__Stats/40 - LinearModels/_ANOVA_Models/30_TwowayANOVA/Johnsongrass.r",
     "project_path" : null,
     "properties" : {
