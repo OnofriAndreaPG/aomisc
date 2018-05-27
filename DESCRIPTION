@@ -1,0 +1,10 @@
+Package: aomisc
+Version: 0.22
+Date: 2010-28-10
+Title: miscellaneous routines
+Author: Andrea Onofri <onofri@unipg.it>
+Maintainer: Andrea Onofri <onofri@unipg.it>
+Depends: R (>= 2.10.0)
+Description: Miscellaneous methods
+License: GPL (version 2 or later)
+
