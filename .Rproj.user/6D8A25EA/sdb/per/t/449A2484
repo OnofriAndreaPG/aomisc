@@ -1,0 +1,20 @@
+{
+    "collab_server" : "",
+    "contents" : "install.packages(\"devtools\")\ninstall.packages(\"drc\")\nlibrary(devtools)\ninstall_github(\"OnofriAndreaPG/statBook\")\nlibrary(drc)\nlibrary(statBook)\ndata(\"competition\")\ncompetition\n\n#Load libraries\nlibrary(drc)\nlibrary(statBook)\n\n#Fit model\nmod <- drm(Yield ~ Dens, data=competition,\n           fct=cousens85())\nsummary(mod)\nplot(mod, log=\"\")\n\n#Create function\ncomp <- function(d, YWF, i, a){\n  YWF*(1 - (i*d)/(100*(1+(i*d)/a)))\n }\n\n#Plot function\n#Plot X-Y\nplot(Yield ~ Dens, type=\"n\", data=competition, \n     xlab=\"Density (plants/m2)\",\n     ylab=\"Yield (t/ha)\", pch=1, axes=F,\n     xlim=c(0,100), ylim=c(0,40), col=\"red\")\naxis(1, at=seq(0, 100, by=10), labels=seq(0, 100, by=10))\naxis(2, at=seq(0,40,by=10), labels=seq(0,40,by=10))\ntext(40, 30, labels=\"prova\")\n\nlibrary(plyr)\nmedie <- ddply(competition, c(\"Dens\"), \n               function(df) c(Mean=mean(df$Yield), \n                              StDev=sd(df$Yield) ))\npoints(medie$Mean ~ medie$Dens, pch=20, bg=\"black\")\narrows(medie$Dens, medie$Mean+medie$StDev, \n       medie$Dens, medie$Mean-medie$StDev, angle=90, \n       code=3, length=0.02)\ncurve(comp(x, coef(mod)[1], coef(mod)[2], coef(mod)[3]), \n      xlim=c(0,100), add=T, col=\"red\")\n\n#Cinetica di degradazione\ndata(degradation)\ndegradation\nplot(Conc ~ Time, data=degradation)\n\nmod2 <- drm(Conc ~ Time, data=degradation,\n            fct=EXD.2())\nsummary(mod2)\nplot(mod2, log=\"\")\nmod2$fct$fct(35, matrix(coef(mod2), 1,2))\nED(mod2, 20, type=\"absolute\")\n",
+    "created" : 1528820096353.000,
+    "dirty" : false,
+    "encoding" : "UTF-8",
+    "folds" : "",
+    "hash" : "2611529113",
+    "id" : "449A2484",
+    "lastKnownWriteTime" : 1527699048,
+    "last_content_update" : 1527699048,
+    "path" : "~/Documents/_DBXAndrea/Dropbox/_Lavoro/_Lessons/2018_CorsoCatania/terzo.R",
+    "project_path" : null,
+    "properties" : {
+    },
+    "relative_order" : 3,
+    "source_on_save" : false,
+    "source_window" : "",
+    "type" : "r_source"
+}
