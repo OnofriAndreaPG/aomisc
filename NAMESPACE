@@ -1,4 +1,4 @@
 importFrom(drc, drm)
 importFrom(utils, tail)
 import(stats)
-export(linear, parabolic, firstOrder, cousens85)
+export(linear, parabolic, firstOrder, cousens85, NLSlinear)
