@@ -1,3 +1,21 @@
+#linear model
+LinMean <- function(predictor, a, b) {
+                      a + b * predictor
+}
+
+LinInit <- function(mCall, LHS, data) {
+          xy <- sortedXyData(mCall[["predictor"]], LHS, data)
+          lmFit <- lm((xy[, "y"]) ~ xy[, "x"])
+          coefs <- coef(lmFit)
+          a <- coefs[1]
+          b <- coefs[2]
+          value <- c(a, b)
+          names(value) <- mCall[c("a", "b")]
+          value
+}
+
+NLSlinear <- selfStart(LinMean, LinInit, parameters=c("a", "b"))
+
 #linear model with no intercept
 Lin2Mean <- function(predictor, b) {
                       b * predictor
