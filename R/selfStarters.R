@@ -1,40 +1,5 @@
 # A collection of self-starting functions for R ########################
-# 
-#USAGE
-# Linear <- a + b * predictor
-# Linear2 <- b * predictor
-# Poly2 <- a + b * predictor + c * ( predictor ^ 2 )
-# expoGrowth <- a*exp(b * predictor)
-# expoDecay <- y0 * exp(- b * predictor
-# powerCurve <- a * predictor ^ (b)
-# logCurve <- a  + b * log(x)
-# logCurve2 <- b * log(x)
-# rational <- (b + c*x) / (1 + a*x)
-# negExp <- a*(1 - exp (- b * x))
-# monoGrowth <- a - (a - b) * exp (- c * x)
-# asymReg <- a - b*(c ^ (- x))
-# plogistic <-   1 / (1 + exp(- (x - mu)/sigma))
-# plogisticT <-   D / (1 + exp(- (x - mu)/sigma))
-# logiGrowth.1 <- a / (1 + exp(- b * x + c))
-# logiGrowth.2 <- a / (1 + b * exp(- c * x))
-# logiGrowth.3 <- init * plateau / (init + (plateau - init) * exp( - m * x))
-# logiGrowth.4 <- plateau / (1 + exp(- m * (x - t50)))}
-# logistic.1 <- c + (d-c) / (1 + b * exp(a * x))
-# logistic.2 <- 1 / (1 + b * exp(- a * x))
-# hillCurve <- (a * predictor^c)/(b + predictor^c)
-# LL.4 <- c+(d-c)/(1+exp(b*(log(x+0.000001)-log(ED50))))
-# LL.3 <- d/(1+exp(b*(log(x+0.000001)-log(ED50))))
-# pgumbel <- exp(-exp(-((x - mu)/s)))
-# gompGrowth.1 <- a * exp( - (m/c) * exp (-c * x))
-# gompGrowth.2 <- a * exp( - exp (b - c*x))
-# gompGrowth.3 <- a * exp( -b * exp (-c*x))
-# extremeValue <- a * (1 - exp( - exp (b - c*x)))
-# pextreme <- 1 - exp( - exp ( (x - mu)/sigma))
-# weibull.1 <- a * exp ( - exp ( b - c * log(x + 0.000001)))
-# weibull.2 <- a * (1 - exp( - exp (b - c * log(x+0.0000001))))
-# AvsPFD <- Rd + Amax*(1-exp((-Qapp/Amax)*x))
-# polyInv.3 <- 1/(a + b*x + c*x^2)
-# polyInv.4 <- x/(a + b*x + c*x^2)
+# Edited: 9/1/19
 
 #Linear Model ##############################################
 linear.fun <- function(predictor, a, b) {
@@ -209,6 +174,10 @@ NLS.poly2 <- selfStart(poly2.fun, poly2.Init, parameters=c("a", "b", "c"))
 }
 
 # Exponential growth ####################################################
+EXD.fun <- function(X, c, d, e){
+  c + (d - c) * exp( X / e)  
+}
+
 expoGrowth.fun <- function(predictor, a, b) {
                       a * exp(b * predictor)
 }
