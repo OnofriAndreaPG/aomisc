@@ -1,7 +1,8 @@
 importFrom(drc, drm)
 importFrom(utils, tail)
 import(stats)
-export(linear.fun, NLS.linear, DRC.linear, linearOrigin.fun, 
+export(angularTransform,
+       linear.fun, NLS.linear, DRC.linear, linearOrigin.fun,
        NLS.linearOrigin,
        poly2.fun, NLS.poly2, DRC.poly2,
        expoGrowth.fun, NLS.expoGrowth, DRC.expoGrowth,
