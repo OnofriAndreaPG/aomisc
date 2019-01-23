@@ -824,9 +824,9 @@ NLS.YL <- selfStart(YL.fun, YL.Init, parameters=c("i", "A"))
     invisible(returnList)
 }
 
-#Yield - Wee Density function ###################
+#Yield - Weed Density function ###################
 cousens85.fun <- function(Dens, Ywf, i, A) {
-      YWF*(1 - (i * Dens) / (100 * (1 + i * x/A)))
+      Ywf*(1 - (i * Dens) / (100 * (1 + i * Dens/A)))
 }
 
 "DRC.cousens85" <-
