@@ -40,7 +40,7 @@ NLS.linear <- selfStart(linear.fun, linear.Init, parameters=c("a", "b"))
         parmMat[, notFixed] <- parm
 
         a <- parmMat[, 1]; b <- parmMat[, 2]
-        Linear.fun(x, a, b)
+        linear.fun(x, a, b)
     }
 
     ## Defining self starter function
