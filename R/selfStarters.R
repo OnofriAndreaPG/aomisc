@@ -64,7 +64,11 @@ NLS.linear <- selfStart(linear.fun, linear.Init, parameters=c("a", "b"))
     pnames <- names[notFixed]
 
     ## Defining derivatives
-
+    deriv1 <- function(x, parm){
+      d1 <- rep(1, length(x) )
+      d2 <- x
+      cbind(d1, d2)
+   }
     ## Defining the ED function
 
     ## Defining the inverse function
@@ -73,7 +77,7 @@ NLS.linear <- selfStart(linear.fun, linear.Init, parameters=c("a", "b"))
     text <- "Straight line"
 
     ## Returning the function with self starter and names
-    returnList <- list(fct = fct, ssfct = ssfct, names = pnames, text = text, noParm = sum(is.na(fixed)))
+    returnList <- list(fct = fct, ssfct = ssfct, deriv1 = deriv1, names = pnames, text = text, noParm = sum(is.na(fixed)))
 
     class(returnList) <- "drcMean"
     invisible(returnList)
@@ -158,7 +162,12 @@ NLS.poly2 <- selfStart(poly2.fun, poly2.Init, parameters=c("a", "b", "c"))
   pnames <- names[notFixed]
 
   ## Defining derivatives
-
+  deriv1 <- function(x, parm){
+      d1 <- rep(1, length(x) )
+      d2 <- x
+      d3 <- x^2
+      cbind(d1, d2, d3)
+   }
   ## Defining the ED function
 
   ## Defining the inverse function
@@ -167,7 +176,8 @@ NLS.poly2 <- selfStart(poly2.fun, poly2.Init, parameters=c("a", "b", "c"))
   text <- "Second Order Polynomial"
 
   ## Returning the function with self starter and names
-  returnList <- list(fct = fct, ssfct = ssfct, names = pnames, text = text, noParm = sum(is.na(fixed)))
+  returnList <- list(fct = fct, ssfct = ssfct, names = pnames, 
+    text = text, noParm = sum(is.na(fixed)), deriv1 = deriv1)
 
   class(returnList) <- "drcMean"
   invisible(returnList)
