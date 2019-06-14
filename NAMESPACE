@@ -12,4 +12,7 @@ export(angularTransform,
        cousens85.fun, DRC.cousens85,
        powerCurve.fun, NLS.powerCurve, DRC.powerCurve,
        logCurve.fun, NLS.logCurve, DRC.logCurve,
-       L.fun, G.fun, E.fun)
+       L.fun, G.fun, E.fun,
+       JointRegr, JointRegrM,
+       AMMI, AMMImeans, GGE, GGEmeans,
+       biplot.met, stability.met, summary.met)

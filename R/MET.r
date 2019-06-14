@@ -78,10 +78,10 @@ G <- obj$Genotype_scores
   #perp2p(G[vertex[1],1], G[vertex[1],2], G[vertex[length(vertex)],1], G[vertex[length(vertex)],2], 0, 0)
 }
 
-summary.Met <- function(Yield, Var, Env){
+summary.met <- function(Yield, Var, Env){
 #Questa funzione calcola le statistiche descrittive per prove varietali
-#ripetute in più ambienti, anche sbilanciate. ATTENZIONE: lavora sulle 
-#medie ambientali delle varietà (non sulle repliche).
+#ripetute in piÃ¹ ambienti, anche sbilanciate. ATTENZIONE: lavora sulle 
+#medie ambientali delle varietÃ  (non sulle repliche).
 #Data: 15/04/2009
 
 #Statistiche descrittive
@@ -123,11 +123,9 @@ result <- cbind(result, "LSMixed"=BLUEs)
 return(result)
 }
 
-Index <- function(Yield, Var, Env){
-#Questa funzione calcola le statistiche descrittive per prove varietali
-#ripetute in più ambienti, anche sbilanciate. ATTENZIONE: lavora sulle 
-#medie ambientali delle varietà (non sulle repliche). calcola medie
-# max min SD Least squares means and Blups
+YieldIndices <- function(Yield, Var, Env){
+#Calcolo degli indici produttivi, su prove multiambiente
+#Lavora sulle medie (tabelle a due vie genotipo x ambiente)  
 #Data: 15/11/2009
 
 MedieEnv <- tapply(Yield, Env, mean)[Env]
@@ -135,11 +133,11 @@ Index <- as.vector(Yield/MedieEnv*100)
 Index
 }
 
-stability.Met <- function(Yield, Var, Env){
+stability.met <- function(Yield, Var, Env){
 #Questa funzione calcola le statistiche descrittive per prove varietali
-#ripetute in più ambienti, anche sbilanciate. ATTENZIONE: lavora sulle 
-#medie ambientali delle varietà (non sulle repliche). calcola gli indici
-# produttivi e di stabilità
+#ripetute in piÃ¹ ambienti, anche sbilanciate. ATTENZIONE: lavora sulle 
+#medie ambientali delle varietÃ  (non sulle repliche). calcola gli indici
+# produttivi e di stabilitÃ 
 #Data: 25/11/2009
 
 MedieEnv <- tapply(Yield, Env, mean)[Env]
@@ -152,7 +150,8 @@ Index <- as.vector(Yield/MedieEnv*100)
 Ecoval <- tapply((Yield - MedieEnv - MedieVar + MediaGen)^2, Var, sum)
 #Ecoval <- Ecoval/(NumEnv-1)
 EnvirVar <- tapply(Yield, Var, var)
-msge <- EnvirVar*(NumEnv-1)
+#msge <- EnvirVar*(NumEnv-1)
+msge <- sum((Yield - MedieEnv - MedieVar + MediaGen)^2)
 sigma <- 1/((NumVar-1)*(NumVar-2)*(NumEnv-1))*(NumVar*(NumVar-1)*Ecoval - msge)
 result <- summary.Met(Index, Var, Env)[,1:5]
 
