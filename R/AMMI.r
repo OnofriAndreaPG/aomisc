@@ -91,7 +91,7 @@ AMMI_old <- function(variety, envir, block, yield, PC=2, biplot=1) {
   return(result)
 }
 
-AMMImeans <- function(variety, envir, yield, PC=2) {
+AMMImeans <- function(yield, genotype, env, PC=2) {
 
 ## ADDITIVE MAIN EFFECTS MULTIPLICATIVE INTERACTION MODEL, AS APPLIED TO AGRICULTURE VARIETY TRIALS
   ## REFERENCE: H. F. Gollob, 1968. A statistical model which combine features of factor analytic and
@@ -104,7 +104,7 @@ AMMImeans <- function(variety, envir, yield, PC=2) {
   ## yield is a vector of yields to be analysed (numerical)
   ## PC is the number of PC to be considered (default is 2)
   
-  
+  variety <- genotype; envir <- env
   add.anova <- aov(yield ~ envir * variety)
   int.eff <- model.tables(add.anova, type = "effects", cterms = "envir:variety")$tables$"envir:variety"
   int.mean <- model.tables(add.anova, type = "means", cterms = "envir:variety")$tables$"envir:variety"
@@ -132,17 +132,18 @@ AMMImeans <- function(variety, envir, yield, PC=2) {
   PC.n<-c(1:length(svalues))
   PC.SS<-svalues^2
   percSS<-PC.SS/sum(PC.SS)*100
-  GGE.table<-data.frame("PC"=PC.n,"Singular_value"=svalues,"PC_SS"=PC.SS, "Perc_of_Total_SS"=percSS)
+  GGE.table<-data.frame("PC"=PC.n,"Singular_value"=svalues,"PC_SS"=PC.SS, "Perc_of_Total_SS"=percSS,
+                        cum_perc = cumsum(percSS))
   #numblock<-length(levels(block))
   #GGE.SS<-(t(as.vector(ge.eff))%*%as.vector(ge.eff))*numblock
   GGE.SS<-(t(as.vector(int.eff))%*%as.vector(int.eff))
     
 ## 6 - Other results  
-  result <- list(Interaction_means = int.mean,
-       Interaction_effect=int.eff,"GGE_Sum of Squares"=GGE.SS, 
-       GGE_summary = GGE.table,
-       Environment_scores = E, Genotype_scores = G,
-       "Genotype_means"=var.mean, "Environment_means"=envir.mean)#, Stability = stability)
+  result <- list(means_table = int.mean,
+       interaction_effect=int.eff,"AMMI_Sum of Squares"=GGE.SS, 
+       summary = GGE.table,
+       environment_scores = E, genotype_scores = G,
+       "genotype_means"=var.mean, "environment_means"=envir.mean)#, Stability = stability)
   class(result) <- "AMMIobject"
   return(result)  
 }

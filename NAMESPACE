@@ -15,4 +15,5 @@ export(angularTransform,
        L.fun, G.fun, E.fun,
        JointRegr, JointRegrM,
        AMMI, AMMImeans, GGE, GGEmeans,
-       biplot.met, stability.met, summary.met)
+       biplot.met, stability.met, summary.met,
+       getVarCov.gls, getVarCov.lme)

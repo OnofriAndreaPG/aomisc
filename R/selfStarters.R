@@ -100,6 +100,67 @@ linearOrigin.Init <- function(mCall, LHS, data) {
 
 NLS.linearOrigin <- selfStart(linearOrigin.fun, linearOrigin.Init, parameters=c("b"))
 
+"DRC.linearOrigin" <- function(fixed = c(NA), names = c("b"))
+{
+    ## Checking arguments
+    numParm <- 1
+    if (!is.character(names) | !(length(names) == numParm))
+      {stop("Not correct 'names' argument")}
+    if (!(length(fixed) == numParm))
+      {stop("Not correct 'fixed' argument")}
+
+    ## Fixing parameters (using argument 'fixed')
+    notFixed <- is.na(fixed)
+    parmVec <- rep(0, numParm)
+    parmVec[!notFixed] <- fixed[!notFixed]
+
+    ## Defining the non-linear function
+    fct <- function(x, parm)
+    {
+        parmMat <- matrix(parmVec, nrow(parm), numParm, byrow = TRUE)
+        parmMat[, notFixed] <- parm
+
+        b <- parmMat[, 1]
+        linearOrigin.fun(x, b)
+    }
+
+    ## Defining self starter function
+    ssfct <- function(dataf)
+    {
+        x <- dataf[, 1]
+        y <- dataf[, 2]
+
+        #regression on pseudo y values
+        pseudoY <- y
+        pseudoX <- x
+        coefs <- coef( lm(pseudoY ~ pseudoX - 1) )
+        b <- coefs[1]
+
+        return(c(b)[notFixed])
+    }
+
+    ## Defining names
+    pnames <- names[notFixed]
+
+    ## Defining derivatives
+    deriv1 <- function(x, parm){
+      d1 <- x
+      cbind(d1)
+   }
+    ## Defining the ED function
+
+    ## Defining the inverse function
+
+    ## Defining descriptive text
+    text <- "Straight line through origin"
+
+    ## Returning the function with self starter and names
+    returnList <- list(fct = fct, ssfct = ssfct, deriv1 = deriv1, names = pnames, text = text, noParm = sum(is.na(fixed)))
+
+    class(returnList) <- "drcMean"
+    invisible(returnList)
+}
+
 #Poly2 ##############################################
 poly2.fun <- function(predictor, b) {
                       a + b * predictor + c * (predictor^2)
