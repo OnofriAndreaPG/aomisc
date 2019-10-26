@@ -1,18 +1,133 @@
+## ADDITIVE MAIN EFFECTS MULTIPLICATIVE INTERACTION MODEL, AS APPLIED TO AGRICULTURE VARIETY TRIALS
+## REFERENCE: H. F. Gollob, 1968. A statistical model which combine features of factor analytic and
+## analysis of variance techniques. Psychometrika, 33, 1, 73-114.
+## Update: 16/07/2019  
+
+## INPUTS:
+## genotype is a vector of genotype codes (factor)
+## env is a vector of environment codes (factor)
+## block is a vector of block codes (factor)
+## yield is a vector of yields to be analysed (numerical)
+## PC is the number of PC to be considered (default is 2)
+## AMMI: works on balanced raw data
+## AMMImeans: works on means
+  
+AMMImeans <- function(yield, genotype, env, PC = 2) {
+
+  variety <- genotype; envir <- env
+  add.anova <- aov(yield ~ envir * variety)
+  int.eff <- model.tables(add.anova, type = "effects", cterms = "envir:variety")$tables$"envir:variety"
+  int.mean <- model.tables(add.anova, type = "means", cterms = "envir:variety")$tables$"envir:variety"
+  envir.mean <- model.tables(add.anova, type = "means", cterms = "envir")$tables$"envir"
+  var.mean <- model.tables(add.anova, type = "means", cterms = "variety")$tables$"variety"
+  overall.mean <- model.tables(add.anova, type = "means")$tables[[1]]
+  
+## 3 - SVD
+  dec <- svd(int.eff, nu = PC, nv = PC)
+  if (PC > 1){ 
+    D <- diag(dec$d[1:PC]) 
+  } else {
+    D <- matrix(dec$d[1:PC],1,1)
+  }
+  E <- dec$u %*% sqrt(D)
+  G <- dec$v %*% sqrt(D)
+  Ecolnumb <- c(1:PC)
+  Ecolnames <- paste("PC", Ecolnumb, sep = "")
+  dimnames(E) <- list(levels(envir), Ecolnames)
+  dimnames(G) <- list(levels(variety), Ecolnames)
+  #stability <- sqrt(G[,1]^2+G[,2]^2)
+
+## 4 - Significance of PCs
+  svalues<-dec$d
+  PC.n<-c(1:length(svalues))
+  PC.SS<-svalues^2
+  percSS<-PC.SS/sum(PC.SS)*100
+  GGE.table<-data.frame("PC"=PC.n,"Singular_value"=svalues,"PC_SS"=PC.SS, "Perc_of_Total_SS"=percSS,
+                        cum_perc = cumsum(percSS))
+  #numblock<-length(levels(block))
+  #GGE.SS<-(t(as.vector(ge.eff))%*%as.vector(ge.eff))*numblock
+  GGE.SS<-(t(as.vector(int.eff))%*%as.vector(int.eff))
+    
+## 6 - Other results  
+  result <- list(means_table = int.mean,
+       interaction_effect=int.eff,"AMMI_Sum of Squares"=GGE.SS, 
+       summary = GGE.table,
+       environment_scores = E, genotype_scores = G,
+       "genotype_means"=var.mean, "environment_means"=envir.mean)#,Stability = stability)
+  class(result) <- "AMMIobject"
+  return(result)  
+}
+
+AMMI <- function(yield, genotype, envir, block, PC = 2) {
+
+## 1 - Descriptive statistics
+  variety <- genotype
+  overall.mean <- mean(yield)
+  envir.mean <- tapply(yield, envir, mean)
+  var.mean <- tapply(yield, variety, mean)  
+  int.mean <- tapply(yield, list(variety,envir), mean)
+  envir.num <- length(envir.mean)
+  var.num <- length(var.mean)
+  
+## 2 - ANOVA (additive model) 
+  variety <- factor(variety)
+  envir <- factor(envir)
+  block <- factor(block)  
+  add.anova <- aov(yield ~ envir + block %in% envir + variety + envir:variety)
+  modelTables <- model.tables(add.anova, type = "effects", cterms = "envir:variety")
+  int.eff <- modelTables$tables$"envir:variety"
+  add.anova.residual.SS <- deviance(add.anova)
+  add.anova.residual.DF <- add.anova$df.residual
+  add.anova.residual.MS <- add.anova.residual.SS/add.anova.residual.DF
+  anova.table <- summary(add.anova)
+  row.names(anova.table[[1]]) <- c("Environments", "Genotypes", "Blocks(Environments)","Environments x Genotypes", "Residuals")
+  
+## 3 - SVD
+  dec <- svd(int.eff, nu = PC, nv = PC)
+  if (PC > 1){ 
+    D <- diag(dec$d[1:PC]) 
+  } else {
+    D <- dec$d[1:PC]
+  }
+  E <- dec$u %*% sqrt(D)
+  G <- dec$v %*% sqrt(D)
+  Ecolnumb <- c(1:PC)
+  Ecolnames <- paste("PC", Ecolnumb, sep = "")
+  dimnames(E) <- list(levels(envir), Ecolnames)
+  dimnames(G) <- list(levels(variety), Ecolnames)
+  
+## 4 - Significance of PCs
+  numblock <- length(levels(block))
+  int.SS <- (t(as.vector(int.eff)) %*% as.vector(int.eff))*numblock
+  PC.SS <- (dec$d[1:PC]^2)*numblock  
+  PC.DF <- var.num + envir.num - 1 - 2*Ecolnumb
+  residual.SS <- int.SS - sum(PC.SS)
+  residual.DF <- ((var.num - 1)*(envir.num - 1)) - sum(PC.DF)
+  PC.SS[PC + 1] <- residual.SS  
+  PC.DF[PC + 1] <- residual.DF
+  MS <- PC.SS/PC.DF
+  F <- MS/add.anova.residual.MS
+  probab <- pf(F, PC.DF, add.anova.residual.DF, lower.tail = FALSE)
+  percSS <- PC.SS/int.SS
+  rowlab <- c(Ecolnames, "Residuals")
+  mult.anova <- data.frame(Effect = rowlab, SS = PC.SS, DF = PC.DF, MS = MS, F = F, Prob. = probab, "% of Total SS"=percSS)
+  stability <- sqrt(G[,1]^2+G[,2]^2)
+
+## 6 - Results  
+  result <- list(genotype_means = var.mean, environment_means = envir.mean,  interaction_means = int.mean,
+       interaction_effect=int.eff, additive_ANOVA = anova.table, mult_Interaction = mult.anova, 
+       environment_scores = E, genotype_scores = G, stability = stability)
+       class(result) <- "AMMIobject"    
+cat(paste("Result of AMMI Analysis", "\n", "\n"))
+cat(paste("Environment Scores", "\n"))
+print(E)
+cat(paste("\n","Genotype Scores", "\n"))
+print(G)
+return(invisible(result))
+}
+
 AMMI_old <- function(variety, envir, block, yield, PC=2, biplot=1) {
 
-## ADDITIVE MAIN EFFECTS MULTIPLICATIVE INTERACTION MODEL, AS APPLIED TO AGRICULTURE VARIETY TRIALS
-  ## REFERENCE: H. F. Gollob, 1968. A statistical model which combine features of factor analytic and
-  ## analysis of variance techniques. Psychometrika, 33, 1, 73-114.
-  ## Update: 30/10/2007  
-
-  ## INPUTS:
-  ## variety is a vector of variety codes (factor)
-  ## envir is a vector of environment codes (factor)
-  ## block is a vector of block codes (factor)
-  ## yield is a vector of yields to be analysed (numerical)
-  ## PC is the number of PC to be considered (default is 2)
-  
-  
 ## 1 - Descriptive statistics
   overall.mean <- mean(yield)
   envir.mean <- tapply(yield, envir, mean)
@@ -91,140 +206,3 @@ AMMI_old <- function(variety, envir, block, yield, PC=2, biplot=1) {
   return(result)
 }
 
-AMMImeans <- function(yield, genotype, env, PC=2) {
-
-## ADDITIVE MAIN EFFECTS MULTIPLICATIVE INTERACTION MODEL, AS APPLIED TO AGRICULTURE VARIETY TRIALS
-  ## REFERENCE: H. F. Gollob, 1968. A statistical model which combine features of factor analytic and
-  ## analysis of variance techniques. Psychometrika, 33, 1, 73-114.
-  ## Update: 23/11/2008  
-
-  ## INPUTS:
-  ## variety is a vector of variety codes (factor)
-  ## envir is a vector of environment codes (factor)
-  ## yield is a vector of yields to be analysed (numerical)
-  ## PC is the number of PC to be considered (default is 2)
-  
-  variety <- genotype; envir <- env
-  add.anova <- aov(yield ~ envir * variety)
-  int.eff <- model.tables(add.anova, type = "effects", cterms = "envir:variety")$tables$"envir:variety"
-  int.mean <- model.tables(add.anova, type = "means", cterms = "envir:variety")$tables$"envir:variety"
-  envir.mean <- model.tables(add.anova, type = "means", cterms = "envir")$tables$"envir"
-  var.mean <- model.tables(add.anova, type = "means", cterms = "variety")$tables$"variety"
-  overall.mean <- model.tables(add.anova, type = "means")$tables[[1]]
-  
-## 3 - SVD
-  dec <- svd(int.eff, nu = PC, nv = PC)
-  if (PC > 1){ 
-    D <- diag(dec$d[1:PC]) 
-  } else {
-    D <- matrix(dec$d[1:PC],1,1)
-  }
-  E <- dec$u %*% sqrt(D)
-  G <- dec$v %*% sqrt(D)
-  Ecolnumb <- c(1:PC)
-  Ecolnames <- paste("PC", Ecolnumb, sep = "")
-  dimnames(E) <- list(levels(envir), Ecolnames)
-  dimnames(G) <- list(levels(variety), Ecolnames)
-  #stability <- sqrt(G[,1]^2+G[,2]^2)
-
-## 4 - Significance of PCs
-  svalues<-dec$d
-  PC.n<-c(1:length(svalues))
-  PC.SS<-svalues^2
-  percSS<-PC.SS/sum(PC.SS)*100
-  GGE.table<-data.frame("PC"=PC.n,"Singular_value"=svalues,"PC_SS"=PC.SS, "Perc_of_Total_SS"=percSS,
-                        cum_perc = cumsum(percSS))
-  #numblock<-length(levels(block))
-  #GGE.SS<-(t(as.vector(ge.eff))%*%as.vector(ge.eff))*numblock
-  GGE.SS<-(t(as.vector(int.eff))%*%as.vector(int.eff))
-    
-## 6 - Other results  
-  result <- list(means_table = int.mean,
-       interaction_effect=int.eff,"AMMI_Sum of Squares"=GGE.SS, 
-       summary = GGE.table,
-       environment_scores = E, genotype_scores = G,
-       "genotype_means"=var.mean, "environment_means"=envir.mean)#, Stability = stability)
-  class(result) <- "AMMIobject"
-  return(result)  
-}
-
-AMMI <- function(variety, envir, block, yield, PC=2) {
-
-## ADDITIVE MAIN EFFECTS MULTIPLICATIVE INTERACTION MODEL, AS APPLIED TO AGRICULTURE VARIETY TRIALS
-  ## REFERENCE: H. F. Gollob, 1968. A statistical model which combine features of factor analytic and
-  ## analysis of variance techniques. Psychometrika, 33, 1, 73-114.
-  ## Update: 30/10/2007  
-
-  ## INPUTS:
-  ## variety is a vector of variety codes (factor)
-  ## envir is a vector of environment codes (factor)
-  ## block is a vector of block codes (factor)
-  ## yield is a vector of yields to be analysed (numerical)
-  ## PC is the number of PC to be considered (default is 2)
-  ## NEEDS BALANCED DATA
-  
-  
-## 1 - Descriptive statistics
-  overall.mean <- mean(yield)
-  envir.mean <- tapply(yield, envir, mean)
-  var.mean <- tapply(yield, variety, mean)  
-  int.mean <- tapply(yield, list(variety,envir), mean)
-  envir.num <- length(envir.mean)
-  var.num <- length(var.mean)
-  
-## 2 - ANOVA (additive model) 
-  variety <- factor(variety)
-  envir <- factor(envir)
-  block <- factor(block)  
-  add.anova <- aov(yield ~ envir + block %in% envir + variety + envir:variety)
-  modelTables <- model.tables(add.anova, type = "effects", cterms = "envir:variety")
-  int.eff <- modelTables$tables$"envir:variety"
-  add.anova.residual.SS <- deviance(add.anova)
-  add.anova.residual.DF <- add.anova$df.residual
-  add.anova.residual.MS <- add.anova.residual.SS/add.anova.residual.DF
-  anova.table <- summary(add.anova)
-  row.names(anova.table[[1]]) <- c("Environments", "Genotypes", "Blocks(Environments)","Environments x Genotypes", "Residuals")
-  
-## 3 - SVD
-  dec <- svd(int.eff, nu = PC, nv = PC)
-  if (PC > 1){ 
-    D <- diag(dec$d[1:PC]) 
-  } else {
-    D <- dec$d[1:PC]
-  }
-  E <- dec$u %*% sqrt(D)
-  G <- dec$v %*% sqrt(D)
-  Ecolnumb <- c(1:PC)
-  Ecolnames <- paste("PC", Ecolnumb, sep = "")
-  dimnames(E) <- list(levels(envir), Ecolnames)
-  dimnames(G) <- list(levels(variety), Ecolnames)
-  
-## 4 - Significance of PCs
-  numblock <- length(levels(block))
-  int.SS <- (t(as.vector(int.eff)) %*% as.vector(int.eff))*numblock
-  PC.SS <- (dec$d[1:PC]^2)*numblock  
-  PC.DF <- var.num + envir.num - 1 - 2*Ecolnumb
-  residual.SS <- int.SS - sum(PC.SS)
-  residual.DF <- ((var.num - 1)*(envir.num - 1)) - sum(PC.DF)
-  PC.SS[PC + 1] <- residual.SS  
-  PC.DF[PC + 1] <- residual.DF
-  MS <- PC.SS/PC.DF
-  F <- MS/add.anova.residual.MS
-  probab <- pf(F, PC.DF, add.anova.residual.DF, lower.tail = FALSE)
-  percSS <- PC.SS/int.SS
-  rowlab <- c(Ecolnames, "Residuals")
-  mult.anova <- data.frame(Effect = rowlab, SS = PC.SS, DF = PC.DF, MS = MS, F = F, Prob. = probab, "% of Total SS"=percSS)
-  stability <- sqrt(G[,1]^2+G[,2]^2)
-
-## 6 - Results  
-  result <- list(Genotype_means = var.mean, Environment_means = envir.mean,  Interaction_means = int.mean,
-       Interaction_effect=int.eff, Additive_ANOVA = anova.table, Mult_Interaction = mult.anova, 
-       Environment_scores = E, Genotype_scores = G, Stability = stability)
-       class(result) <- "AMMIobject"    
-cat(paste("Result of AMMI Analysis", "\n", "\n"))
-cat(paste("Environment Scores", "\n"))
-print(E)
-cat(paste("\n","Genotype Scores", "\n"))
-print(G)
-return(invisible(result))
-}

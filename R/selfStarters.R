@@ -1,5 +1,22 @@
 # A collection of self-starting functions for R ########################
 # Edited: 9/1/19
+# LIST of available functions
+# 1 - linear
+# 2 - linear by origin
+# 3 - second order polynomial
+# 4 - exponential growth
+# 5 - Exponential decay
+# 6 - Asymptotic regression
+# 7 - Negative exponential
+# 8 - Negative exponential distribution
+# 9 - Asymptotic regression
+# 9 - Power curve
+# 10 - Logarithmic regression
+# 11 - Logarithmic regression with no intercept
+# 12 - Yield loss function 
+# 13 - Yield weed density curve
+# 14 - Rational function
+
 
 #Linear Model ##############################################
 linear.fun <- function(predictor, a, b) {
@@ -161,7 +178,7 @@ NLS.linearOrigin <- selfStart(linearOrigin.fun, linearOrigin.Init, parameters=c(
     invisible(returnList)
 }
 
-#Poly2 ##############################################
+#Polynomial regression (2nd order) ##############################################
 poly2.fun <- function(predictor, b) {
                       a + b * predictor + c * (predictor^2)
 }
@@ -177,7 +194,6 @@ poly2.Init <- function(mCall, LHS, data) {
           names(value) <- mCall[c("a", "b", "c")]
           value
 }
-
 NLS.poly2 <- selfStart(poly2.fun, poly2.Init, parameters=c("a", "b", "c"))
 
 "DRC.poly2" <- function(fixed = c(NA, NA, NA), names = c("a", "b", "c"))
@@ -402,90 +418,6 @@ function(fixed = c(NA, NA), names = c("init", "k"))
     invisible(returnList)
 }
 
-#Asymptotic regression model ##############################
-asymReg.fun <- function(predictor, a, b, c) {
-                      x <- predictor
-                      a - (a - b) * exp (- c * x)
-}
-
-asymReg.Init <- function(mCall, LHS, data) {
-          xy <- sortedXyData(mCall[["predictor"]], LHS, data)
-          x <-  xy[, "x"]; y <- xy[, "y"]
-          plateau <- max(y) * 1.05
-        
-          ## Linear regression on pseudo y values
-          pseudoY <- log( 1 - (y / plateau ) )
-          coefs <- coef( lm(pseudoY ~ x) )
-          temp <- exp(coefs[1])
-          b <- plateau * (1 - temp)
-          c <- - coefs[2]
-          a <- plateau
-          value <- c(a, b, c)
-          names(value) <- mCall[c("a", "b", "c")]
-          value
-}
-
-NLS.asymReg <- selfStart(asymReg.fun, asymReg.Init, parameters=c("a", "b", "c"))
-
-"DRC.asymReg" <-
-function(fixed = c(NA, NA, NA), names = c("init", "m", "plateau"))
-{
-    ## Checking arguments
-    numParm <- 3
-    if (!is.character(names) | !(length(names) == numParm)) {stop("Not correct 'names' argument")}
-    if (!(length(fixed) == numParm)) {stop("Not correct 'fixed' argument")}
-
-    ## Fixing parameters (using argument 'fixed')
-    notFixed <- is.na(fixed)
-    parmVec <- rep(0, numParm)
-    parmVec[!notFixed] <- fixed[!notFixed]
-
-    ## Defining the non-linear function
-    fct <- function(x, parm)
-    {
-        parmMat <- matrix(parmVec, nrow(parm), numParm, byrow = TRUE)
-        parmMat[, notFixed] <- parm
-
-        W0 <- parmMat[, 1]; Wf <- parmMat[, 3]; m <- parmMat[, 2]
-        Wf - (Wf - W0) * exp (- m * x)
-    }
-
-    ## Defining self starter function
-    ssfct <- function(dataf)
-    {
-        x <- dataf[, 1]
-        y <- dataf[, 2]
-
-        plateau <- max(y) * 1.05
-
-        ## Linear regression on pseudo y values
-        pseudoY <- log( 1 - (y / plateau ) )
-        coefs <- coef( lm(pseudoY ~ x) )
-        b <- exp(coefs[1])
-        init <- plateau * (1 - b)
-        m <- - coefs[2]
-
-        return(c(init, m, plateau)[notFixed])
-    }
-
-    ## Defining names
-    pnames <- names[notFixed]
-
-    ## Defining derivatives
-
-    ## Defining the ED function
-
-    ## Defining the inverse function
-
-    ## Defining descriptive text
-    text <- "Monomolecular Growth Model"
-
-    ## Returning the function with self starter and names
-    returnList <- list(fct = fct, ssfct = ssfct, names = pnames, text = text, noParm = sum(is.na(fixed)))
-
-    class(returnList) <- "drcMean"
-    invisible(returnList)
-}
 
 #Negative exponential ###########################################################
 negExp.fun <- function(predictor, a, c) {

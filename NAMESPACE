@@ -3,11 +3,11 @@ importFrom(utils, tail)
 import(stats)
 export(angularTransform,
        linear.fun, NLS.linear, DRC.linear, linearOrigin.fun,
-       NLS.linearOrigin,
+       NLS.linearOrigin, nlsL.3,
        poly2.fun, NLS.poly2, DRC.poly2,
        expoGrowth.fun, NLS.expoGrowth, DRC.expoGrowth,
        expoDecay.fun, NLS.expoDecay, DRC.expoDecay, EXD.fun,
-       asymReg.fun, NLS.asymReg, DRC.asymReg,
+       asymReg.fun, NLS.asymReg, DRC.asymReg, DRC.SSasymp,
        YL.fun, NLS.YL, DRC.YL,
        cousens85.fun, DRC.cousens85,
        powerCurve.fun, NLS.powerCurve, DRC.powerCurve,
