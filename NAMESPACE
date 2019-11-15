@@ -15,6 +15,6 @@ export(angularTransform,
        logCurve.fun, NLS.logCurve, DRC.logCurve,
        L.fun, G.fun, E.fun,
        JointRegr, JointRegrM,
-       AMMI, AMMImeans, GGE, GGEmeans,
+       AMMI, AMMImeans, GGE, GGEmeans, CVA,
        biplot.met, stability.met, summary.met,
        getVarCov.gls, getVarCov.lme)
