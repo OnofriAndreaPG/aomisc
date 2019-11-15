@@ -26,9 +26,10 @@ CVA<-function(dataset, groups){
   	WBc <- solve(Wc) %*% Bc
   	V1c <- as.numeric(eigen(WBc)$vectors[,1:numcanonical])
   	V1c <- matrix(V1c, numcolonne, numcanonical)
-  	scal <- diag( sqrt( t(V1c) %*% (Wc/(numdati - numclasses)) %*% V1c ) )
+  	scal <- sqrt( diag( t(V1c) %*% (Wc/(numdati - numclasses)) %*% V1c ) )
   	raw <- t( apply(V1c, 1, function(x) x / scal) )
-  	dimnames(raw) <- list(dimnames(dataset)[[2]],canvarnames)
+  	if(nrow(raw) < 2) raw <- t(raw)
+  	dimnames(raw) <- list(dimnames(dataset)[[2]], canvarnames)
   	raw
   	
   	#Standardizzazione e calcolo coefficienti standardizzati
@@ -46,7 +47,11 @@ CVA<-function(dataset, groups){
   	V1 <- as.numeric(eigen(WB)$vectors[,1:numcanonical])
   	V1 <- matrix(V1, numcolonne, numcanonical)
 	  VARCAN1 <- dataset.standardizzata %*% V1
-	  maovst2 <- manova(VARCAN1 ~ groups)
+	  if(length(VARCAN1[1,]) > 1) {
+	       maovst2 <- manova(VARCAN1 ~ groups)
+	  } else {
+	       maovst2 <- lm(VARCAN1 ~ groups)
+	  }
 	  varcovar <- t(maovst2$residuals)%*%maovst2$residuals
 	  i <- array(c(1:numcanonical,1:numcanonical),dim=c(numcanonical,2))
 		dev1 <- varcovar[i]
@@ -55,8 +60,8 @@ CVA<-function(dataset, groups){
 		identita <- matrix(c(0),numcanonical,numcanonical)
 		identita[i] <- scaling
 		coefst <- V1 %*% identita
-	  dimnames(coefst) <- list(dimnames(dataset)[[2]],canvarnames)
-    coefst
+	  dimnames(coefst) <- list(dimnames(dataset)[[2]], canvarnames)
+  	coefst
 
 ## calculation of raw canonical coefficients
 	  # dev2 <- t(dataset.centrata)%*%dataset.centrata
@@ -87,7 +92,7 @@ CVA<-function(dataset, groups){
      matDati <- as.matrix( cbind(rep(1,numdati), dataset))
      matCoef <- as.matrix( class.fun )
      classVal <- matDati %*% t(matCoef)
-     class <- apply(classVal, 1, function(x) which.max(x))
+     class <- levels(groups)[apply(classVal, 1, function(x) which.max(x))]
     
 
   ## canonical structure
@@ -95,7 +100,7 @@ CVA<-function(dataset, groups){
 	   total <- cor(dataset, VARCAN)
 
 	   medie <- aov(dataset.centrata~groups-1)$fitted
-	   VARCANmedie <- medie%*%raw
+	   VARCANmedie <- medie %*% raw
 	   between <- cor(medie,VARCANmedie)
 
 	   medie <- aov(as.matrix(dataset) ~ groups-1)$residuals
