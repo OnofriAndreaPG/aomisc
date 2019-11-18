@@ -79,7 +79,7 @@ CVA<-function(dataset, groups){
 	   cancor<-sqrt(A/(1+A))
 	   cancor2<-cancor^2
 
- ## scores of centroids
+ ## scores of centroids (creati con gli standardised coefficients)
 	   medie <- aov(dataset.standardizzata~groups-1)$coefficients
      scores <- medie%*%coefst
 
