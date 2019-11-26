@@ -17,4 +17,4 @@ export(angularTransform,
        JointRegr, JointRegrM,
        AMMI, AMMImeans, GGE, GGEmeans, CVA,
        biplot.met, stability.met, summary.met,
-       getVarCov.gls, getVarCov.lme)
+       getVarCov.gls, getVarCov.lme, anova.aovlist)
