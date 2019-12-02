@@ -1,6 +1,6 @@
-#plotnls <- function(fm, ...) UseMethod("plotnls")
+plotnls <- function(fm, ...) UseMethod("plotnls")
 
-plotnls <- function(fm, type = "means", ...) {
+plotnls.nls <- function(fm, type = "means", ...) {
 
     if (!inherits(fm, "nls"))
     stop("use only with \"nls\" objects")
