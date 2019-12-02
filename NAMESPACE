@@ -18,4 +18,5 @@ export(angularTransform,
        AMMI, AMMImeans, GGE, GGEmeans, CVA,
        biplot.met, stability.met, summary.met,
        getVarCov.gls, getVarCov.lme, anova.aovlist,
-       plot.nls, plotnls, plotnls.nls, R2nls, boxcox.nls)
+       plot.nls, plotnls, plotnls.nls, R2nls, boxcox.nls,
+       bcGetLambda)
