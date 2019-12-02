@@ -18,4 +18,4 @@ export(angularTransform,
        AMMI, AMMImeans, GGE, GGEmeans, CVA,
        biplot.met, stability.met, summary.met,
        getVarCov.gls, getVarCov.lme, anova.aovlist,
-       plot.nls, plotnls, R2.nls)
+       plot.nls, plotnls, R2nls)
