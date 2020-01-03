@@ -1,5 +1,7 @@
 importFrom(drc, drm)
 importFrom(utils, tail)
+importFrom(car, deltaMethod)
+importFrom(plyr, ldply)
 import(stats)
 export(angularTransform,
        linear.fun, NLS.linear, DRC.linear, linearOrigin.fun,
@@ -19,4 +21,4 @@ export(angularTransform,
        biplot.met, stability.met, summary.met,
        getVarCov.gls, getVarCov.lme, anova.aovlist,
        plot.nls, plotnls, plotnls.nls, R2nls, boxcox.nls,
-       bcGetLambda)
+       bcGetLambda, gnlht)
