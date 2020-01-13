@@ -5,7 +5,7 @@ importFrom(plyr, ldply)
 import(stats)
 export(angularTransform,
        linear.fun, NLS.linear, DRC.linear, linearOrigin.fun,
-       NLS.linearOrigin, nlsL.3, nlsLL.3, nlsLL.4,
+       NLS.linearOrigin, DRC.linearOrigin, nlsL.3, nlsLL.3, nlsLL.4,
        poly2.fun, NLS.poly2, DRC.poly2,
        expoGrowth.fun, NLS.expoGrowth, DRC.expoGrowth,
        expoDecay.fun, NLS.expoDecay, DRC.expoDecay, EXD.fun,
