@@ -55,7 +55,7 @@ DRC.asymReg <- function(fixed = c(NA, NA, NA), names = c("init", "m", "plateau")
         init <- coef(lm(y ~ x, data = dataR))[1]
       
         ## Linear regression on pseudo y values
-        pseudoY <- log( ( y - plateau )/(init - Asym ) )
+        pseudoY <- log( ( y - plateau )/(init - plateau ) )
         coefs <- coef( lm(pseudoY ~ x - 1) )
         m <- - coefs[1]
         return(c(init, m, plateau)[notFixed])
