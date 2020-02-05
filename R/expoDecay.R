@@ -14,7 +14,7 @@ expoDecay.Init <- function(mCall, LHS, data) {
   value
 }
 
-NLS.expoDecay <- selfStart(expoDecay.fun, expoDecay.Init, parameters=c("init", "k"))
+NLS.expoDecay <- selfStart(expoDecay.fun, expoDecay.Init, parameters=c("C0", "k"))
 
 "DRC.expoDecay" <-
   function(fixed = c(NA, NA), names = c("init", "k"))
