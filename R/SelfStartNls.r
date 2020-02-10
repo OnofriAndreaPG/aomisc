@@ -23,7 +23,7 @@ monoGrowthInit <- function(mCall, LHS, data) {
 
 NLSmonoGrowth <- selfStart(monoGrowthMean, monoGrowthInit, parameters=c("a", "b", "c"))
 
-#Logistic growth - 1
+#Logistic growth - 1 ###############################
 logiGrowth1Mean <- function(predictor, a, b, c) {
                       x <- predictor
                       a / (1 + exp(- b * x + c))
@@ -193,54 +193,6 @@ hillCurveInit <- function(mCall, LHS, data) {
 
 NLShillCurve <- selfStart(hillCurveMean, hillCurveInit, parameters=c("a", "b", "c"))
 
-#Log-Logistic Function for bioassay work nlsLL.4
-NLSLL.4mean <- function(predictor, c, d, b, ED50) {
-                      x <- predictor
-                      c+(d-c)/(1+exp(b*(log(x+0.000001)-log(ED50))))
-}
-
-#NLSLL.4mean <- deriv(~c+(d-c)/(1+exp(b*(log(predictor+0.000001)-log(ED50)))),c("c","d","b","ED50"),function(predictor,c,d,b,ED50){})
-
-NLSLL.4Init <- function(mCall, LHS, data) {
-          xy <- sortedXyData(mCall[["predictor"]], LHS, data)
-          x <-  xy[, "x"]; y <- xy[, "y"]
-	       c <- min(y)*0.95
-          d <- max(y) * 1.05 
-              
-          ## Linear regression on pseudo y values
-          pseudoY <- log((d-y)/(y-c))
-          coefs <- coef( lm(pseudoY ~ log(x+0.000001)))
-          k <- -coefs[1]; b <- coefs[2]
-          ED50 <- exp(k/b)
-          value <- c(c,d,b,ED50)
-          names(value) <- mCall[c("c", "d", "b", "ED50")]
-          value
-}
-
-NLSLL.4 <- selfStart(NLSLL.4mean, NLSLL.4Init, parameters=c("c", "d", "b", "ED50"))
-
-#Log-Logistic Function for bioassay work nlsLL.3
-NLSLL.3mean <- function(predictor, d, b, ED50) {
-                      x <- predictor
-                      d/(1+exp(b*(log(x+0.000001)-log(ED50))))
-}
-
-NLSLL.3Init <- function(mCall, LHS, data) {
-          xy <- sortedXyData(mCall[["predictor"]], LHS, data)
-          x <-  xy[, "x"]; y <- xy[, "y"]
-          d <- max(y) * 1.05              
-          ## Linear regression on pseudo y values
-          pseudoY <- log((d-y)/(y+0.00001))
-          coefs <- coef( lm(pseudoY ~ log(x+0.000001)))
-          k <- -coefs[1]; b <- coefs[2]
-          ED50 <- exp(k/b)
-          value <- c(d,b,ED50)
-          names(value) <- mCall[c("d", "b", "ED50")]
-          value
-}
-
-NLSLL.3 <- selfStart(NLSLL.3mean, NLSLL.3Init, parameters=c("d", "b", "ED50"))
-
 #GOMPERTZ MODELS################################################################
 
 #Gompertz growth - 1
@@ -350,55 +302,6 @@ NLSextremeValue <- selfStart(extremeValueMean, extremeValueInit, parameters=c("a
 
 #WEIBULL TYPE MODELS
 #Weibull-1
-weibull1Mean <- function(predictor, a, b, c) {
-                      x <- predictor
-                      a * exp ( - exp ( b - c * log(x + 0.000001)))
-}
-
-weibull1Init <- function(mCall, LHS, data) {
-          xy <- sortedXyData(mCall[["predictor"]], LHS, data)
-          x <-  xy[, "x"]; y <- xy[, "y"]
-          
-          a <- max(y) * 1.05
-        
-          ## Linear regression on pseudo y values
-          pseudoY <- log( - log( y / a ) )
-          coefs <- coef( lm(pseudoY ~ log(x+0.000001)) )
-
-          b <- coefs[1]
-          c <- - coefs[2]
-          value <- c(a, b, c)
-          names(value) <- mCall[c("a", "b", "c")]
-          value
-}
-
-NLSweibull.1 <- selfStart(weibull1Mean, weibull1Init, parameters=c("a", "b", "c"))
-
-#Weibull 2
-weibull2Mean <- function(predictor, a, b, c) {
-                      x <- predictor
-                      a * (1 - exp( - exp (b - c * log(x+0.0000001))))
-}
-
-weibull2Init <- function(mCall, LHS, data) {
-          xy <- sortedXyData(mCall[["predictor"]], LHS, data)
-          x <-  xy[, "x"]; y <- xy[, "y"]
-          
-          a <- max(y) * 1.05
-        
-          ## Linear regression on pseudo y values
-          pseudoY <- log( - log( (a - y ) / a ) )
-          coefs <- coef( lm(pseudoY ~ log(x+0.0000001)) )
-
-          k <- coefs[1]
-          c <- - coefs[2]
-          b <- k
-          value <- c(a, b, c)
-          names(value) <- mCall[c("a", "b", "c")]
-          value
-}
-
-NLSweibull.2 <- selfStart(weibull2Mean, weibull2Init, parameters=c("a", "b", "c"))
 
 #Modified Mitscherlich equation for A vs PFD relationships
 AvsPFDMean <- function(predictor, Rd, Amax, Qapp) {

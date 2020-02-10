@@ -1,12 +1,53 @@
-"boxcox.nls" <- function(object, lambda = seq(-2, 2, 1/10), plotit = FALSE, start,
-eps = 1/50, bcAdd = 0, level = 0.95, xlab = expression(lambda), ylab = "log-likelihood", ...)
+"boxcox.nls" <- function(object, lambda = seq(-2, 2, 1/10), plotit = TRUE, start,
+                         eps = 1/50, bcAdd = 0, level = 0.95, bcVal = NULL,
+                         xlab = expression(lambda), ylab = "log-likelihood", ...)
 {
-    ## Defining the Box-Cox modified power transformations
+################################################################################
+boxcoxCI <- function(x, y, level = 0.95){
+    ## R lines taken from boxcox.default in the package MASS and then
+    # slightly modified
+    xl <- x
+    loglik <- y
+    
+    llnotna <- !is.na(loglik)
+    xl <- xl[llnotna]
+    loglik <- loglik[llnotna]
+    
+    m <- length(loglik)
+    
+    mx <- (1:m)[loglik == max(loglik)][1]
+    Lmax <- loglik[mx]
+    lim <- Lmax - qchisq(level, 1)/2
+    
+    ind <- range((1:m)[loglik > lim])
+    
+    xx <- rep(NA, 2)
+    if(loglik[1] < lim) 
+    {
+        i <- ind[1]
+        xx[1] <- xl[i - 1] + ((lim - loglik[i - 1]) *
+                                  (xl[i] - xl[i - 1]))/(loglik[i] - loglik[i - 1])
+        
+    }
+    if(loglik[m] < lim) 
+    {
+        i <- ind[2] + 1
+        xx[2] <- xl[i - 1] + ((lim - loglik[i - 1]) *
+                                  (xl[i] - xl[i - 1]))/(loglik[i] - loglik[i - 1])
+    }
+    return(xx)
+    }
+
+##################################################################################
+    if(is.null(bcVal) == F) plotit = F
+    if(is.data.frame(eval(object$data)) == F){
+        stop("boxcox.nls() works only when a dataframe is passed to the nls call")
+    }
     bfFct <- function(lv)
     {
         function(x) {if (abs(lv) < eps) {return(log(x+bcAdd))} else {return(((x+bcAdd)^lv-1)/lv)}}    
     }
-
+    
     evalForm <- eval(formula(object)[[3]][[1]])
     bfFct2 <- function(lv)
     {
@@ -15,17 +56,7 @@ eps = 1/50, bcAdd = 0, level = 0.95, xlab = expression(lambda), ylab = "log-like
             ## Transforming the mean
             bcFct <- bfFct(lv)
             bcFctVal <- bcFct(x)
-
-#            ## Assigning sttributes
-#            attrList <- attributes(evalForm)
-#            lenAL <- length(attrList)
-#            namAL <- names(attrList)
-#     
-#            for (i in 1:lenAL)
-#            {
-##                attr(bcFctVal, namAL[i]) <- attrList[[i]]
-#            }
-#            
+            
             ## Adjusting gradient
             grad1 <- attr(bcFctVal, "gradient")
             grad2 <- grad1*(x^(lv-1))
@@ -34,16 +65,16 @@ eps = 1/50, bcAdd = 0, level = 0.95, xlab = expression(lambda), ylab = "log-like
             bcFctVal
         }
         bcFct2
-     }
-     
-     if (!inherits(evalForm , "selfStart"))
-     {
-         bfFct2 <- bfFct
-     }    
-         
-#    bcFct <- function(x) {if (abs(lv) < eps) {return(log(x+bcAdd))} else {return(((x+bcAdd)^lv-1)/lv)}}
-#    assign("bcFct", bcFct, envir = .GlobalEnv)
-#    newFormula <- bcFct(.) ~ bcFct(.)
+    }
+    
+    if (!inherits(evalForm , "selfStart"))
+    {
+        bfFct2 <- bfFct
+    }    
+    
+    #    bcFct <- function(x) {if (abs(lv) < eps) {return(log(x+bcAdd))} else {return(((x+bcAdd)^lv-1)/lv)}}
+    #    assign("bcFct", bcFct, envir = .GlobalEnv)
+    #    newFormula <- bcFct(.) ~ bcFct(.)
     if (missing(start)) 
     {
         startVec <- coef(object)
@@ -54,28 +85,35 @@ eps = 1/50, bcAdd = 0, level = 0.95, xlab = expression(lambda), ylab = "log-like
     ## Defining the log-likelihood function
     llFct <- function(object, lv)
     {
-        sumObj <- summary(object)
-        N <- sum(sumObj$df)
+        # print(object$data)
+        # stop()
+        #sumObj <- summary(object)
+        #N <- sum(sumObj$df)
+        N <- length(eval(object$data)[,1])
         Ji <- (eval(object$data)[, as.character(formula(object)[[2]])[2]])^(lv-1)
         
         -N*log(sqrt(sum(residuals(object)^2)/N))-N/2+sum(log(Ji))
     }
-    
-    lenlam <- length(lambda)
-    llVec <- rep(NA, lenlam)
+    #print(bcVal)
+    if(is.null(bcVal) == T){
+        lenlam <- length(lambda)
+        llVec <- rep(NA, lenlam)
+    } else {
+        lenlam <- 1
+        llVec <- rep(NA, lenlam)
+        lambda <- bcVal
+    }
     for (i in 1:lenlam)
     {
-#        lv <- lambda[i]
-#        assign("bcFct", bfFct(lambda[i]), envir = .GlobalEnv)     
+        #        lv <- lambda[i]
+        #        assign("bcFct", bfFct(lambda[i]), envir = .GlobalEnv)     
         assign("bcFct1", bfFct(lambda[i]), envir = .GlobalEnv)     
         assign("bcFct2", bfFct2(lambda[i]), envir = .GlobalEnv)     
-        newFormula <- bcFct1(.) ~ bcFct2(.)        
-
+        newFormula <- bcFct1(.) ~ bcFct2(.)
         nlsTemp <- try(update(object, formula. = newFormula, start = startVec, trace = FALSE), silent = TRUE)
-#        if (!inherits(nlsTemp, "try-error")) {llVec[i] <- logLik(nlsTemp)}
         if (!inherits(nlsTemp, "try-error")) {llVec[i] <- llFct(nlsTemp, lambda[i])}
     }
-
+    
     lv <- lambda[which.max(llVec)]
     llv <- max(llVec, na.rm = TRUE)
     ci <- boxcoxCI(lambda, llVec, level)
@@ -96,62 +134,21 @@ eps = 1/50, bcAdd = 0, level = 0.95, xlab = expression(lambda), ylab = "log-like
         scx <- (1/10 * (plims[2] - plims[1]))/par("pin")[1] 
         text(lambda[1] + scx, lim + scal, " 95%") 
         abline(h = lim, lty = 3)
-
+        
     }
-#    assign("bcFct", bfFct(lv), envir = .GlobalEnv) 
-    assign("bcFct1", bfFct(lv), envir = .GlobalEnv) 
-    assign("bcFct2", bfFct2(lv), envir = .GlobalEnv) 
-    retFit <- update(object, formula. = newFormula, start = startVec, trace = FALSE)  
-    # last time 'bcFct1' and 'bcFct2' are used
-#    rm(bcFct1, bcFct2, envir = .GlobalEnv)  # to ensure that the predict method can find bcFct2()
-    retFit$lambda <- list(lambda = lv, ci = ci)
-    invisible(retFit)
-}
-
-
-"boxcoxCI" <- 
-function(x, y, level = 0.95)
-{
-    ## R lines taken from boxcox.default in the package MASS and then slightly modified
-    xl <- x
-    loglik <- y
-    
-    llnotna <- !is.na(loglik)
-    xl <- xl[llnotna]
-    loglik <- loglik[llnotna]
-    
-    m <- length(loglik)
-
-    mx <- (1:m)[loglik == max(loglik)][1]
-    Lmax <- loglik[mx]
-    lim <- Lmax - qchisq(level, 1)/2
-
-    ind <- range((1:m)[loglik > lim])
-
-    xx <- rep(NA, 2)
-    if(loglik[1] < lim) 
-    {
-        i <- ind[1]
-        xx[1] <- xl[i - 1] + ((lim - loglik[i - 1]) *
-                          (xl[i] - xl[i - 1]))/(loglik[i] - loglik[i - 1])
-
-    }
-    if(loglik[m] < lim) 
-    {
-        i <- ind[2] + 1
-        xx[2] <- xl[i - 1] + ((lim - loglik[i - 1]) *
-                          (xl[i] - xl[i - 1]))/(loglik[i] - loglik[i - 1])
-    }
-    return(xx)
-}
-
-"bcGetLambda" <- function(object)
-{
+    # #    assign("bcFct", bfFct(lv), envir = .GlobalEnv) 
+    # assign("bcFct1", bfFct(lv), envir = .GlobalEnv) 
+    # assign("bcFct2", bfFct2(lv), envir = .GlobalEnv) 
+    # retFit <- update(object, formula. = newFormula, start = startVec, trace = FALSE)  
+    # # last time 'bcFct1' and 'bcFct2' are used
+    rm(bcFct1, bcFct2, envir = .GlobalEnv)  # to ensure that the predict method can find bcFct2()
+    # retFit$lambda <- list(lambda = lv, ci = ci)
+    # invisible(retFit)
     cat("\n")
-    cat("Estimated lambda:", object$lambda$lambda, "\n")
- 
-    bcci <- format(object$lambda$ci, digits = 2)
+    cat("Estimated lambda:", lv, "\n")
+    
+    bcci <- format(ci, digits = 2)
     ciStr <- paste("[", bcci[1], ",", bcci[2], "]", sep="")
-    cat("Confidence interval for lambda:", ciStr, "\n\n")    
+    cat("Confidence interval for lambda:", ciStr, "\n\n")
+    
 }
-

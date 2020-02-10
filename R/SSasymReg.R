@@ -71,7 +71,7 @@ DRC.asymReg <- function(fixed = c(NA, NA, NA), names = c("init", "m", "plateau")
     ## Defining the inverse function
 
     ## Defining descriptive text
-    text <- "Monomolecular Growth Model"
+    text <- "Asymptotic Regression Model"
 
     ## Returning the function with self starter and names
     returnList <- list(fct = fct, ssfct = ssfct, names = pnames, text = text, noParm = sum(is.na(fixed)))
