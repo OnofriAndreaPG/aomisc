@@ -19,7 +19,7 @@ L.4.Init <- function(mCall, LHS, data) {
   value
 }
 
-nlsL.3 <- selfStart(L.4.fun, L.4.Init, parameters=c("b", "c", "d", "e"))
+nlsL.4 <- selfStart(L.4.fun, L.4.Init, parameters=c("b", "c", "d", "e"))
 
 #Log-Logistic Function for bioassay work nlsL.3
 # Similar to L.3
@@ -66,3 +66,21 @@ L.2.Init <- function(mCall, LHS, data) {
 }
 
 nlsL.2 <- selfStart(L.2.fun, L.2.Init, parameters=c("b", "e"))
+
+# Logistic curve with two-parameters (DRC) ##########################
+"L.2" <-
+  function (upper = 1, fixed = c(NA, NA), names = c("b", "e"))
+  {
+    numParm <- 2
+    if (!is.character(names) | !(length(names) == numParm)) {
+      stop("Not correct 'names' argument")
+    }
+    if (!(length(fixed) == numParm)) {
+      stop("Not correct length of 'fixed' argument")
+    }
+    return(logistic(fixed = c(fixed[1], 0, upper, fixed[2], 1),
+                    names = c(names[1], "c", "d", names[2], "f"),
+                    fctName = as.character(match.call()[[1]]),
+                    fctText = "Logistic (ED50 as parameter)"))
+  }
+
