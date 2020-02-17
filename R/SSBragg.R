@@ -3,6 +3,123 @@ bragg.3.fun <- function(X, b, d, e){
   d * exp(- b * (X - e)^2)
 }
 
+DRC.bragg.3 <- function(){
+  fct <- function(x, parm) {
+    bragg.3.fun(x, parm[,1], parm[,2], parm[,3])
+  }
+  ssfct <- function(data){
+    # Get the data     
+    x <- data[, 1]
+    y <- data[, 2]
+    
+    d <- max(y)
+    e <- x[which.max(y)]
+    
+    ## Linear regression on pseudo-y and pseudo-x
+    pseudoY <- log( y / d )
+    pseudoX <- (x - e)^2
+    coefs <- coef( lm(pseudoY ~ pseudoX - 1) )
+    b <- - coefs[1]
+    start <- c(b, d, e)
+    return( start )
+  }
+  names <- c("b", "d", "e")
+  text <- "Bragg equation with three parameters"
+    
+  ## Returning the function with self starter and names
+  returnList <- list(fct = fct, ssfct = ssfct, names = names, text = text)
+  class(returnList) <- "drcMean"
+  invisible(returnList)
+}
+
+bragg.3.init <- function(mCall, LHS, data) {
+    xy <- sortedXyData(mCall[["X"]], LHS, data)
+    x <-  xy[, "x"]; y <- xy[, "y"]
+    
+    d <- max(y)
+    e <- x[which.max(y)]
+
+    ## Linear regression on pseudo-y and pseudo-x
+    pseudoY <- log( y / d )
+    pseudoX <- (x - e)^2
+    coefs <- coef( lm(pseudoY ~ pseudoX - 1) )
+    b <- - coefs[1]
+    start <- c(b, d, e)
+    names(start) <- mCall[c("b", "d", "e")]
+    start
+}
+
+NLS.bragg.3 <- selfStart(bragg.3.fun, bragg.3.init, parameters=c("b", "d", "e"))
+
+
 bragg.4.fun <- function(X, b, c, d, e){
   c + (d - c) * exp(- b * (X - e)^2)
 }
+
+DRC.bragg.4 <- function(){
+  fct <- function(x, parm) {
+    bragg.3.fun(x, parm[,1], parm[,2], parm[,3], parm[,4])
+  }
+  ssfct <- function(data){
+    # Get the data     
+    x <- data[, 1]
+    y <- data[, 2]
+    
+    d <- max(y)
+    c <- min(y) * 0.95
+    e <- x[which.max(y)]
+    
+    
+    ## Linear regression on pseudo-y and pseudo-x
+    pseudoY <- log( (y - c) / d )
+    pseudoX <- (x - e)^2
+    coefs <- coef( lm(pseudoY ~ pseudoX - 1) )
+    b <- - coefs[1]
+    start <- c(b, c, d, e)
+    return( start )
+  }
+  names <- c("b", "c", "d", "e")
+  text <- "Bragg equation with four parameters"
+    
+  ## Returning the function with self starter and names
+  returnList <- list(fct = fct, ssfct = ssfct, names = names, text = text)
+  class(returnList) <- "drcMean"
+  invisible(returnList)
+}
+
+bragg.4.init <- function(mCall, LHS, data) {
+    xy <- sortedXyData(mCall[["X"]], LHS, data)
+    x <-  xy[, "x"]; y <- xy[, "y"]
+    
+    d <- max(y)
+    c <- min(y) * 0.95
+    e <- x[which.max(y)]
+    
+    
+    ## Linear regression on pseudo-y and pseudo-x
+    pseudoY <- log( (y - c) / d )
+    pseudoX <- (x - e)^2
+    coefs <- coef( lm(pseudoY ~ pseudoX - 1) )
+    b <- - coefs[1]
+    start <- c(b, c, d, e)
+    names(start) <- mCall[c("b", "c", "d", "e")]
+    start
+}
+
+NLS.bragg.4 <- selfStart(bragg.4.fun, bragg.4.init, parameters=c("b", "c", "d", "e"))
+
+X <- seq(5, 50, by = 5)
+d <- 25; b <- 0.01; e <- 30
+Ye <- bragg.3.fun(X, b, d, e) 
+plot(Ye ~ X)
+set.seed(123)
+Y <- Ye + rnorm(length(Ye), 0, 2)
+plot(Y ~ X)
+edit(Y)
+X <- c(5, 10, 15, 20, 25, 30, 35, 40, 45, 50)
+Y <- c(0.1, 2, 5.7, 9.3, 19.7, 28.4, 20.3, 6.6, 1.3, 0.1)
+
+mod.nls <- nls(Y ~ NLS.bragg.3(X, b, d, e) )
+summary(mod.nls)
+mod.nls <- nls(Y ~ NLS.bragg.4(X, b, c, d, e) )
+summary(mod.nls)

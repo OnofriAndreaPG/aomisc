@@ -1,5 +1,5 @@
 #Polynomial regression (2nd order) ##############################################
-poly2.fun <- function(predictor, b) {
+poly2.fun <- function(predictor, a, b, c) {
   a + b * predictor + c * (predictor^2)
 }
 
