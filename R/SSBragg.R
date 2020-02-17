@@ -58,7 +58,7 @@ bragg.4.fun <- function(X, b, c, d, e){
 
 DRC.bragg.4 <- function(){
   fct <- function(x, parm) {
-    bragg.3.fun(x, parm[,1], parm[,2], parm[,3], parm[,4])
+    bragg.4.fun(x, parm[,1], parm[,2], parm[,3], parm[,4])
   }
   ssfct <- function(data){
     # Get the data     
@@ -107,19 +107,3 @@ bragg.4.init <- function(mCall, LHS, data) {
 }
 
 NLS.bragg.4 <- selfStart(bragg.4.fun, bragg.4.init, parameters=c("b", "c", "d", "e"))
-
-X <- seq(5, 50, by = 5)
-d <- 25; b <- 0.01; e <- 30
-Ye <- bragg.3.fun(X, b, d, e) 
-plot(Ye ~ X)
-set.seed(123)
-Y <- Ye + rnorm(length(Ye), 0, 2)
-plot(Y ~ X)
-edit(Y)
-X <- c(5, 10, 15, 20, 25, 30, 35, 40, 45, 50)
-Y <- c(0.1, 2, 5.7, 9.3, 19.7, 28.4, 20.3, 6.6, 1.3, 0.1)
-
-mod.nls <- nls(Y ~ NLS.bragg.3(X, b, d, e) )
-summary(mod.nls)
-mod.nls <- nls(Y ~ NLS.bragg.4(X, b, c, d, e) )
-summary(mod.nls)

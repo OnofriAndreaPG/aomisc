@@ -1,10 +1,10 @@
 Package: aomisc
-Version: 0.52
-Date: 2019-02-12
+Version: 0.62
+Date: 2020-02-18
 Title: miscellaneous routines
 Author: Andrea Onofri <onofri@unipg.it>
 Maintainer: Andrea Onofri <onofri@unipg.it>
-Depends: R (>= 3.5.0), drc, dplyr
+Depends: R (>= 3.5.0), drc, plyr, car
 Description: Miscellaneous methods
-License: GPL (version 2 or later)
+License: GPL (>= 2)
 
