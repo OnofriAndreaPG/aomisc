@@ -1,4 +1,4 @@
-# Weibul type 2 Function for bioassay work nlsW1.4
+# Weibul type 2 Function for bioassay work
 # Edited on 07/02/2020 
 W2.4.fun <- function(predictor, b, c, d, e) {
   x <- predictor
@@ -23,7 +23,7 @@ W2.4.init <- function(mCall, LHS, data) {
   value
 }
 
-nlsW2.4 <- selfStart(W2.4.fun, W2.4.init, parameters=c("b", "c", "d", "e"))
+NLS.W2.4 <- selfStart(W2.4.fun, W2.4.init, parameters=c("b", "c", "d", "e"))
 
 
 # Weibul type 2 Function for bioassay work nlsW1.3
@@ -50,7 +50,7 @@ W2.3.init <- function(mCall, LHS, data) {
           value
 }
 
-nlsW2.3 <- selfStart(W2.3.fun, W2.3.init, parameters=c("b", "d", "e"))
+NLS.W2.3 <- selfStart(W2.3.fun, W2.3.init, parameters=c("b", "d", "e"))
 
 # Weibul type 2 Function for bioassay work nlsW1.3
 # Edited on 07/02/2020 
@@ -76,4 +76,4 @@ W2.2.init <- function(mCall, LHS, data) {
   value
 }
 
-nlsW2.2 <- selfStart(W2.2.fun, W2.2.init, parameters=c("b", "e"))
+NLS.W2.2 <- selfStart(W2.2.fun, W2.2.init, parameters=c("b", "e"))

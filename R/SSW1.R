@@ -24,7 +24,7 @@ W1.4.init <- function(mCall, LHS, data) {
   value
 }
 
-nlsW1.4 <- selfStart(W1.4.fun, W1.4.init, parameters=c("b", "c", "d", "e"))
+NLS.W1.4 <- selfStart(W1.4.fun, W1.4.init, parameters=c("b", "c", "d", "e"))
 
 # Weibul type 1 Function for bioassay work nlsW1.3
 # Edited on 07/02/2020 
@@ -51,7 +51,7 @@ W1.3.init <- function(mCall, LHS, data) {
           value
 }
 
-nlsW1.3 <- selfStart(W1.3.fun, W1.3.init, parameters=c("b", "d", "e"))
+NLS.W1.3 <- selfStart(W1.3.fun, W1.3.init, parameters=c("b", "d", "e"))
 
 # Weibul type 1 Function for bioassay work nlsW1.3
 # Edited on 07/02/2020 
@@ -78,4 +78,4 @@ W1.2.init <- function(mCall, LHS, data) {
   value
 }
 
-nlsW1.2 <- selfStart(W1.2.fun, W1.2.init, parameters=c("b", "e"))
+NLS.W1.2 <- selfStart(W1.2.fun, W1.2.init, parameters=c("b", "e"))

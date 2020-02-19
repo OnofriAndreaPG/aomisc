@@ -1,71 +1,74 @@
 #Log-Logistic Function for bioassay work nlsL.4
-L.4.fun <- function(predictor, b, c, d, e) {
+L4.fun <- function(predictor, b, c, d, e) {
   x <- predictor
   c + (d - c)/(1 + exp( - b* (x - e)))
 }
 
-L.4.Init <- function(mCall, LHS, data) {
+L4.Init <- function(mCall, LHS, data) {
   xy <- sortedXyData(mCall[["predictor"]], LHS, data)
   x <-  xy[, "x"]; y <- xy[, "y"]
   d <- max(y) * 1.05
   c <- min(y)
+  
   ## Linear regression on pseudo y values
   pseudoY <- log((d - y)/(y+0.00001 - c))
   coefs <- coef( lm(pseudoY ~ x))
-  k <- - coefs[1]; b <- - coefs[2]
-  e <- exp(k/b)
+  k <- coefs[1]; b <- - coefs[2]
+  e <- k/b
   value <- c(b,c,d,e)
   names(value) <- mCall[c("b", "c", "d", "e")]
   value
 }
 
-nlsL.4 <- selfStart(L.4.fun, L.4.Init, parameters=c("b", "c", "d", "e"))
+NLS.L4 <- selfStart(L4.fun, L4.Init, parameters=c("b", "c", "d", "e"))
 
 #Log-Logistic Function for bioassay work nlsL.3
 # Similar to L.3
-L.3.fun <- function(predictor, b, d, e) {
+L3.fun <- function(predictor, b, d, e) {
   x <- predictor
   d/(1 + exp( - b* (x - e)))
 }
 
-L.3.Init <- function(mCall, LHS, data) {
+L3.Init <- function(mCall, LHS, data) {
   xy <- sortedXyData(mCall[["predictor"]], LHS, data)
   x <-  xy[, "x"]; y <- xy[, "y"]
+  # y <- beetGrowth$weightFree; x <- beetGrowth$DAE 
   d <- max(y) * 1.05              
+  # print(d)
   ## Linear regression on pseudo y values
   pseudoY <- log((d-y)/(y+0.00001))
   coefs <- coef( lm(pseudoY ~ x))
-  k <- - coefs[1]; b <- - coefs[2]
-  e <- exp(k/b)
+  k <- coefs[1]; b <- -coefs[2]
+  e <- k/b
   value <- c(b,d,e)
   names(value) <- mCall[c("b", "d", "e")]
   value
 }
 
-nlsL.3 <- selfStart(L.3.fun, L.3.Init, parameters=c("b", "d", "e"))
+NLS.L3 <- selfStart(L3.fun, L3.Init, parameters=c("b", "d", "e"))
 
 #Log-Logistic Function for bioassay work nlsL.2
 # Similar to L.3
-L.2.fun <- function(predictor, b, e) {
+L2.fun <- function(predictor, b, e) {
   x <- predictor
   1/(1 + exp( - b* (x - e)))
 }
 
-L.2.Init <- function(mCall, LHS, data) {
+L2.Init <- function(mCall, LHS, data) {
   xy <- sortedXyData(mCall[["predictor"]], LHS, data)
   x <-  xy[, "x"]; y <- xy[, "y"]
   d <- 1              
   ## Linear regression on pseudo y values
   pseudoY <- log((d - y)/(y+0.00001))
   coefs <- coef( lm(pseudoY ~ x))
-  k <- - coefs[1]; b <- - coefs[2]
-  e <- exp(k/b)
+  k <- coefs[1]; b <- - coefs[2]
+  e <- k/b
   value <- c(b, e)
   names(value) <- mCall[c("b", "e")]
   value
 }
 
-nlsL.2 <- selfStart(L.2.fun, L.2.Init, parameters=c("b", "e"))
+NLS.L2 <- selfStart(L2.fun, L2.Init, parameters=c("b", "e"))
 
 # Logistic curve with two-parameters (DRC) ##########################
 "L.2" <-

@@ -171,27 +171,6 @@ NLSlogistic.2 <- selfStart(logistic6Mean, logistic6Init, parameters=c("a", "b"))
 
 #LOG_LOGISTIC FUNCTIONS##########################################################
 
-#Hill function
-hillCurveMean <- function(predictor, a, b, c) {
-                      (a * predictor^c)/(b + predictor^c)
-}
-
-hillCurveInit <- function(mCall, LHS, data) {
-          xy <- sortedXyData(mCall[["predictor"]], LHS, data)
-	  		 x <-  xy[, "x"]; y <- xy[, "y"]
-          a <- max(y) * 1.05
-          pseudoY <-  log(( a - y )/ y)
-          pseudoX <- log(x)
-          lmFit <- lm(pseudoY ~ pseudoX )
-          coefs <- coef(lmFit)
-          b <- exp(coefs[1])
-          c <- - coefs[2]
-          value <- c(a, b, c)
-          names(value) <- mCall[c("a", "b", "c")]
-          value
-}
-
-NLShillCurve <- selfStart(hillCurveMean, hillCurveInit, parameters=c("a", "b", "c"))
 
 #GOMPERTZ MODELS################################################################
 
