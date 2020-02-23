@@ -79,7 +79,7 @@ NLS.E2 <- selfStart(E2.fun, E2.Init, parameters=c("b", "e"))
       parmMat <- matrix(parmVec, nrow(parm), numParm, byrow = TRUE)
       parmMat[, notFixed] <- parm
       
-      NLS.E4.fun(x, parm[,1], parm[,2], parm[,3], parm[,4])
+      E4.fun(x, parm[,1], parm[,2], parm[,3], parm[,4])
       
     }
     
@@ -140,7 +140,7 @@ NLS.E2 <- selfStart(E2.fun, E2.Init, parameters=c("b", "e"))
       parmMat <- matrix(parmVec, nrow(parm), numParm, byrow = TRUE)
       parmMat[, notFixed] <- parm
       
-      NLS.E3.fun(x, parm[,1], parm[,2], parm[,3])
+      E3.fun(x, parm[,1], parm[,2], parm[,3])
       
     }
     
@@ -199,7 +199,7 @@ NLS.E2 <- selfStart(E2.fun, E2.Init, parameters=c("b", "e"))
       parmMat <- matrix(parmVec, nrow(parm), numParm, byrow = TRUE)
       parmMat[, notFixed] <- parm
       
-      NLS.E2.fun(x, parm[,1], parm[,2])
+      E2.fun(x, parm[,1], parm[,2])
       
     }
     

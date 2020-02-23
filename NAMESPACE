@@ -24,9 +24,11 @@ export(angularTransform,
        W1.4.fun, NLS.W1.4, W1.3.fun, NLS.W1.3, W1.2.fun, NLS.W1.2,
        W2.4.fun, NLS.W2.4, W2.3.fun, NLS.W2.3, W2.2.fun, NLS.W2.2,
        BC.5.fun, BC.4.fun, BC.3.fun,
-       beta.fun,
+       beta.fun, DRC.beta, NLS.beta,
        bragg.3.fun, NLS.bragg.3, DRC.bragg.3,
        bragg.4.fun, NLS.bragg.4, DRC.bragg.4,
+       lorentz.3.fun, NLS.lorentz.3, DRC.lorentz.3,
+       lorentz.4.fun, NLS.lorentz.4, DRC.lorentz.4,
        triangle.fun,
        JointRegr, JointRegrM,
        AMMI, AMMImeans, GGE, GGEmeans, CVA,
@@ -34,3 +36,7 @@ export(angularTransform,
        getVarCov.gls, getVarCov.lme, anova.aovlist,
        plot.nls, plotnls, plotnls.nls, R2nls, boxcox.nls,
        gnlht)
+
+## S3 methods
+S3method(plot, nls)
+S3method(boxcox, nls)
