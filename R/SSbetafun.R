@@ -38,6 +38,7 @@ DRC.beta <- function(){
 beta.init <- function(mCall, LHS, data) {
     xy <- sortedXyData(mCall[["X"]], LHS, data)
     x <-  xy[, "x"]; y <- xy[, "y"]
+    
     #Self starting code ##############
     d <- max(y)
     Xo <- x[which.max(y)]
@@ -45,7 +46,6 @@ beta.init <- function(mCall, LHS, data) {
     Xb <- ifelse(firstidx == 1,  x[1], (x[firstidx] + x[(firstidx - 1)])/2)
     secidx <- max( which(y !=0) )
     Xc <- ifelse(secidx == length(y),  x[length(x)], (x[secidx] + x[(secidx + 1)])/2)
-
     start <- c(1, d, Xb, Xo, Xc)
     names(start) <- mCall[c("b", "d", "Xb", "Xo", "Xc")]
     start
