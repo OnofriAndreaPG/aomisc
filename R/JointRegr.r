@@ -119,6 +119,8 @@ JointRegrM <- function(Var, Loc, Yield, sigma.e = 0){
   # need an estimate of the RSS from ANOVA on replicates
   # each indicator is followed by significance test and related probability
   
+  Var <- factor(Var)
+  Loc <- factor(Loc)
   #ANOVA
   library(nlme)
   CovL <- fitted(lm(Yield ~ Loc-1)) - mean(Yield)
@@ -147,6 +149,7 @@ JointRegrM <- function(Var, Loc, Yield, sigma.e = 0){
       }
   
   JointTable <- cbind("BETA"=beta, "b" = b, "SSReg" = SSreg, "SSDev" = SSdev, "MSdev" = MSdev, "F" = F, "ProbF"=ProbF, "Sd2" = Sd2 - sigma.e, "FDev" = FDev, "ProbFDev" = ProbFDev)
+  row.names(JointTable) <- levels(Var)
   finRes <- list("GLS" = summary(Joint)$tTable, "JointAnalysis" = JointTable)
   return(finRes)
 }

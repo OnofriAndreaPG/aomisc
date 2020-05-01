@@ -1,0 +1,12 @@
+citHeader("To cite the package 'aomisc' in publications:")
+
+citEntry(entry   = "Manual",
+         title   = "Aomisc: Miscellaneous routines for teaching R",
+         author  = personList(as.person("A. Onofri")),
+         year    = 2020,
+         url     = "https://www.statforbiology.com",
+         textVersion =
+         paste("Onofri A. (2020)",
+               "Aomisc: Miscellaneous routines for teaching R.",
+               "https://www.statforbiology.com")
+)

@@ -1,32 +1,8 @@
-# A collection of self-starting functions for R ########################
-# Edited: 9/1/19
-# LIST of available functions
-# 1 - linear
-# 2 - linear by origin
-# 3 - second order polynomial
-# 4 - exponential growth
-# 5 - Exponential decay
-# 6 - Asymptotic regression
-# 7 - Negative exponential
-# 8 - Negative exponential distribution
-# 9 - Asymptotic regression
-# 9 - Power curve
-# 10 - Logarithmic regression
-# 11 - Logarithmic regression with no intercept
-# 12 - Yield loss function 
-# 13 - Yield weed density curve
-# 14 - Rational function
-
-
-
 
 # Exponential growth ####################################################
 EXD.fun <- function(X, c, d, e){
   c + (d - c) * exp( X / e)  
 }
-
-
-
 
 
 
