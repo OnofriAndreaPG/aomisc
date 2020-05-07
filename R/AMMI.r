@@ -12,9 +12,9 @@
 ## AMMI: works on balanced raw data
 ## AMMImeans: works on means
   
-AMMImeans <- function(yield, genotype, env, PC = 2) {
+AMMImeans <- function(yield, genotype, environment, PC = 2) {
 
-  variety <- genotype; envir <- env
+  variety <- genotype; envir <- environment
   add.anova <- aov(yield ~ envir * variety)
   int.eff <- model.tables(add.anova, type = "effects", cterms = "envir:variety")$tables$"envir:variety"
   int.mean <- model.tables(add.anova, type = "means", cterms = "envir:variety")$tables$"envir:variety"

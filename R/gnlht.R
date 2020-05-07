@@ -1,12 +1,14 @@
 gnlht <- function(obj, func,  const = NULL, vcov. = vcov, parameterNames=names(coef(obj))){
-   # obj <- modNlin
+   # obj <- modNlme
    # func <- list(~ -log(prop)/k1, ~ -log(prop)/k2, ~ -log(prop)/k3, ~ -log(prop)/k4)
    # const <- data.frame(prop = c(0.5, 0.7))
-   # 
+   # # 
    # Da qui
+   require(dplyr)
    temp <- lapply(func, function(x) as.character(as.expression(x[[length(x)]])))
    func <- data.frame(form=unlist(temp))
-   coefs <- coef(obj)
+   if(any(class(obj) == "nlme") | any(class(obj) == "lme")) { coefs <- fixef(obj)
+   } else { coefs <- coef(obj) }
    names(coefs) <- parameterNames
    #print(str(vcov.))
    if (is.function(vcov.)){
@@ -33,12 +35,13 @@ gnlht <- function(obj, func,  const = NULL, vcov. = vcov, parameterNames=names(c
   #val
   lenVal <- length(val[1,]) 
   retDF <- val[, c(-(lenVal-1), -lenVal)]
-  retDF$"t-value" <- retDF$Estimate/retDF$SE
-  if(class(obj) == "nls") resDF <- summary(obj)$df[2]
-  else if(class(obj) == "drc") resDF <- summary(obj)$df
+  retDF$"t-value" <- abs(retDF$Estimate/retDF$SE)
+  if(class(obj)[1] == "nls") resDF <- summary(obj)$df[2]
+  else if(class(obj)[1] == "drc") resDF <- summary(obj)$df
+  else if(class(obj)[1] == "lm") resDF <- obj$df.residual
   else resDF <- Inf
-  # print(resDF)
   retDF$"p-value" <- 2 * pt(retDF$"t-value", resDF, lower.tail = F)
+  if(resDF == Inf) colnames(retDF)[length(colnames(retDF)) - 1] <- "Z-value"
   return(retDF)
 }
 
