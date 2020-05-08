@@ -12,7 +12,8 @@
 ## AMMI: works on balanced raw data
 ## AMMImeans: works on means
   
-AMMImeans <- function(yield, genotype, environment, PC = 2) {
+AMMImeans <- function(yield, genotype, environment, PC = 2,
+                      MSE = NULL, dfr = NULL) {
 
   variety <- genotype; envir <- environment
   add.anova <- aov(yield ~ envir * variety)
@@ -44,24 +45,41 @@ AMMImeans <- function(yield, genotype, environment, PC = 2) {
   percSS<-PC.SS/sum(PC.SS)*100
   GGE.table<-data.frame("PC"=PC.n,"Singular_value"=svalues,"PC_SS"=PC.SS, "Perc_of_Total_SS"=percSS,
                         cum_perc = cumsum(percSS))
-  #numblock<-length(levels(block))
-  #GGE.SS<-(t(as.vector(ge.eff))%*%as.vector(ge.eff))*numblock
-  GGE.SS<-(t(as.vector(int.eff))%*%as.vector(int.eff))
+  GGE.SS <- (t(as.vector(int.eff))%*%as.vector(int.eff))
+    
+  
+  if(!is.null(MSE) & !is.null(dfr)){
+    ngen <- length(int.mean[1,])
+    nenv <- length(int.mean[,1])
+    df_n <- ngen + nenv - 1 - 2 * GGE.table[,1]
+    ss <- GGE.table$PC_SS
+    ms <- ss/df_n
+    f <- ms/MSE
+    pf <- pf(f, df_n, dfr, lower.tail = F)
+    aov.tab <- data.frame(PC = GGE.table[,1], SS = ss, DF = df_n, MS = ms,
+                          "F" = f, "P value" = pf)
+  } else {
+    aov.tab <- NA
+  }
     
 ## 6 - Other results  
   result <- list(means_table = int.mean,
-       interaction_effect=int.eff,"AMMI_Sum of Squares"=GGE.SS, 
-       summary = GGE.table,
+       interaction_effect=int.eff, "AMMI_SS"=GGE.SS, 
+       summary = GGE.table, anova = aov.tab,
        environment_scores = E, genotype_scores = G,
        "genotype_means"=var.mean, "environment_means"=envir.mean)#,Stability = stability)
-  class(result) <- "AMMIobject"
-  return(result)  
+  # cat(paste("Result of AMMI Analysis", "\n", "\n"))
+  # class(result) <- "AMMIobject"
+  # print(E)
+  # cat(paste("\n","Genotype Scores", "\n"))
+  # print(G)
+  return(invisible(result))
 }
 
-AMMI <- function(yield, genotype, envir, block, PC = 2) {
+AMMI <- function(yield, genotype, environment, block, PC = 2) {
 
 ## 1 - Descriptive statistics
-  variety <- genotype
+  variety <- genotype; envir <- environment
   overall.mean <- mean(yield)
   envir.mean <- tapply(yield, envir, mean)
   var.mean <- tapply(yield, variety, mean)  
@@ -98,8 +116,8 @@ AMMI <- function(yield, genotype, envir, block, PC = 2) {
   
 ## 4 - Significance of PCs
   numblock <- length(levels(block))
-  int.SS <- (t(as.vector(int.eff)) %*% as.vector(int.eff))*numblock
-  PC.SS <- (dec$d[1:PC]^2)*numblock  
+  int.SS <- c( (t(as.vector(int.eff)) %*% as.vector(int.eff))*numblock )
+  PC.SS <-  (dec$d[1:PC]^2)*numblock  
   PC.DF <- var.num + envir.num - 1 - 2*Ecolnumb
   residual.SS <- int.SS - sum(PC.SS)
   residual.DF <- ((var.num - 1)*(envir.num - 1)) - sum(PC.DF)
@@ -118,11 +136,11 @@ AMMI <- function(yield, genotype, envir, block, PC = 2) {
        interaction_effect=int.eff, additive_ANOVA = anova.table, mult_Interaction = mult.anova, 
        environment_scores = E, genotype_scores = G, stability = stability)
        class(result) <- "AMMIobject"    
-cat(paste("Result of AMMI Analysis", "\n", "\n"))
-cat(paste("Environment Scores", "\n"))
-print(E)
-cat(paste("\n","Genotype Scores", "\n"))
-print(G)
+# cat(paste("Result of AMMI Analysis", "\n", "\n"))
+# cat(paste("Environment Scores", "\n"))
+# print(E)
+# cat(paste("\n","Genotype Scores", "\n"))
+# print(G)
 return(invisible(result))
 }
 
