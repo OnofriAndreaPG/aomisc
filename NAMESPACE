@@ -1,7 +1,7 @@
 importFrom(drc, drm)
 importFrom(utils, tail)
 importFrom(car, deltaMethod)
-importFrom(plyr, ldply)
+importFrom(plyr, ldply, ddply)
 import(stats)
 export(angularTransform,
        linear.fun, NLS.linear, DRC.linear,
