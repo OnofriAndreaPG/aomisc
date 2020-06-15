@@ -3,7 +3,7 @@ install.packages("rlang")
 install_github("OnofriAndreaPG/aomisc")
 library(aomisc)
 
-
+# SELF STARTERS ######################
 #Negative exponential function
 rm(list=ls())
 set.seed(1234)
@@ -64,7 +64,8 @@ p <- nls(formula(str ~ ((NLS.expoDecay(Time, a, c))^0.5 - 1)/0.5),
 summary(p)
 library(lattice)
 plotnls(p)
-# gnlht
+
+# gnlht #######################################################
 library(aomisc)
 data(metamitron)
 
@@ -111,4 +112,35 @@ funList <- data.frame(form = c("-log(0.5)/k1 + log(0.5)/k2",
                                "-log(0.5)/k1 + log(0.5)/k3",
                                "-log(0.5)/k1 + log(0.5)/k4"))
 gnlht(modNlin, funList)
+
+
+# compVal #######################################
+rm(list = ls())
+data("metamitron")
+head(metamitron)
+library(dplyr)
+dataset <- metamitron %>% 
+  mutate(Time = factor(Time))
+
+mod <- lm(Conc ~ Time*Herbicide, data = dataset)
+
+library(emmeans)
+medie <- emmeans(mod, ~Time:Herbicide)
+contrast(medie, method = "pairwise", adjust = "holm")
+multcomp::cld(medie, adjust = "holm", Letters = letters)
+contrast(medie, method = "pairwise", adjust = "none")
+multcomp::cld(medie, adjust = "none", Letters = letters)
+
+obj <- as.data.frame(medie)[,3]
+SE <- as.data.frame(medie)[,4]
+parNam <- paste(as.data.frame(medie)[,1], as.data.frame(medie)[,2], sep = ":")
+tab <- compVal(obj, parNam, SE, adjust = "none", method = "pairwise",
+               df.residual = 64)
+tab
+
+tab <- compVal(obj, parNam, SE, adjust = "none", method = "cld",
+               df.residual = 64, decreasing = F)
+tab
+
+
 

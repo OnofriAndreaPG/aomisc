@@ -2,8 +2,9 @@ importFrom(drc, drm)
 importFrom(utils, tail)
 importFrom(car, deltaMethod)
 importFrom(plyr, ldply, ddply)
+importFrom(multcompView, multcompLetters3)
 import(stats)
-export(angularTransform,
+export(angularTransform, compVal,
        linear.fun, NLS.linear, DRC.linear,
        linearOrigin.fun, NLS.linearOrigin, DRC.linearOrigin,
        poly2.fun, NLS.poly2, DRC.poly2,
