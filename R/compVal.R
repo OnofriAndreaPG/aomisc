@@ -79,6 +79,7 @@ compVal <- function (object, parameterNames, SE, operator = "-",
   # CLD
   # adjust = "holm"
   # cpMat <- tab
+  
   adjusted.P <- p.adjust(cpMat$`p-value`, method = as.character(adjust))
   cpMat$`p-value` <- as.vector(adjusted.P)
   
@@ -104,9 +105,9 @@ compVal <- function (object, parameterNames, SE, operator = "-",
        row.names(parMat) <- parameterNames
        parMat <- parMat[order(-parMat$Value),]
     }
-   # print(Letters)
-   parMat$CLD = as.character(Letters$monospacedLetters)
-   
+   #print(Letters)
+   parMat$CLD = as.character(Letters$Letters)
+   # print(parMat)
   
   if(decreasing == F) { parMat <- parMat[order(parMat$Value), ]
   } else {parMat <- parMat[order(-parMat$Value), ] }
