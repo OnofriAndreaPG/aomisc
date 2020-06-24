@@ -98,7 +98,7 @@ compVal <- function (object, parameterNames, SE, operator = "-",
        row.names(parMat) <- parameterNames
        parMat <- parMat[order(-parMat$Value),]
     } else {
-       Letters <-multcompView::multcompLetters3("parNam", "obj", p.logic,
+       Letters <- multcompView::multcompLetters3("parNam", "obj", p.logic,
                        data = tmp, reverse = T,
                        threshold = level)
        parMat <- data.frame(Value = object, SE = SE)

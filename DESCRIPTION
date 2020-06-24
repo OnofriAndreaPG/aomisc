@@ -1,10 +1,10 @@
 Package: aomisc
-Version: 0.63
-Date: 2020-05-07
+Version: 0.64
+Date: 2020-06-24
 Title: Statistical methods for the agricultural sciences
 Author: Andrea Onofri <andrea.onofri@unipg.it>
 Maintainer: Andrea Onofri <onofri@unipg.it>
-Depends: R (>= 3.5.0), drc, plyr, car
+Depends: R (>= 3.5.0), drc, plyr, car, multcompView
 Description: This package contains several service functions to be used to analyse datasets obtained from field experiments or other types of assays in agriculture
 URL: https://www.statforbiology.com
 License: GPL (>= 2)
