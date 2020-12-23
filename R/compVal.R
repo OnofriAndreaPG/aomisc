@@ -1,7 +1,7 @@
-# compVal: A frunction for MCP. Coming from drc::compParm
-# object is a vector. ParameterNames is a ctring vector
+# compVal: A function for MCP. Coming from drc::compParm
+# object is a vector. ParameterNames is a string vector
 # SE is a vector of standard errors
-compVal <- function (object, parameterNames, SE, operator = "-", 
+compVal <- function (object, SE, parameterNames, operator = "-", 
                      df.residual = NA, method = "pairwise", 
                      adjust = "holm", decreasing = FALSE, level = 0.05) {
   strVal <- factor(parameterNames, levels = as.character(parameterNames))

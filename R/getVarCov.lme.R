@@ -8,6 +8,7 @@ getVarCov.lme <- function (obj, individuals, type = c("random.effects", "conditi
         stop("not implemented for multiple levels of nesting")
     sigma <- obj$sigma
     D <- as.matrix(obj$modelStruct$reStruct[[1]]) * sigma^2
+    
     if (type == "random.effects") {
         result <- D
     }

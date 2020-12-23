@@ -4,7 +4,7 @@ importFrom(car, deltaMethod)
 importFrom(plyr, ldply, ddply)
 importFrom(multcompView, multcompLetters3)
 import(stats)
-export(angularTransform, compVal,
+export(angularTransform, ma, compVal,
        linear.fun, NLS.linear, DRC.linear,
        linearOrigin.fun, NLS.linearOrigin, DRC.linearOrigin,
        poly2.fun, NLS.poly2, DRC.poly2,
@@ -41,3 +41,4 @@ export(angularTransform, compVal,
 ## S3 methods
 S3method(plot, nls)
 S3method(boxcox, nls)
+S3method(anova, aovList)
