@@ -3,7 +3,7 @@ pairComp <- function(parm, SE, nams = NULL, dfr = NULL, adjust = "none",
   # Make pairwise comparisons based on a vector of means
   # and a vector of standard errors. Uses the glht() function
   # in the multcomp package
-  # Updated on 13/1/2021
+  # Updated on 18/1/2021
   chk <- names(parm)
   
     if(is.null(chk)){
