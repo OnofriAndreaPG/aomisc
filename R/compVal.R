@@ -1,8 +1,10 @@
 # compVal: A function for MCP. Coming from drc::compParm
 # object is a vector. ParameterNames is a string vector
-# SE is a vector of standard errors
+# SE is a vector of standard errors.
+# Depends only on multcompView. Adjustments only those
+# on p.adjust method. Holm is default
 compVal <- function (object, SE, parameterNames, operator = "-", 
-                     df.residual = NA, method = "pairwise", 
+                     df.residual = NA, display = "pairwise", 
                      adjust = "holm", decreasing = FALSE, level = 0.05) {
   strVal <- factor(parameterNames, levels = as.character(parameterNames))
   presentVec <- strVal
@@ -36,17 +38,9 @@ compVal <- function (object, SE, parameterNames, operator = "-",
   cpMat <- matrix(0, lenRV, 4)
   compParm <- rep("", lenRV)
   degfree <- ifelse(is.na(df.residual) == T, Inf, df.residual)
-  # if (is.null(degfree)) {
-  #   degfree <- 100
-  # }
-  # # if (object$type == "continuous") {
   pFct <- function(x) {
     pt(x, degfree)
   }
-  # }
-  # else {
-  #   pFct <- pnorm
-  # }
   strParm <- strVal
   k <- 1
   for (i in 1:lenPV) {
@@ -68,22 +62,10 @@ compVal <- function (object, SE, parameterNames, operator = "-",
   row.names(cpMat) <- compParm
   colnames(cpMat) <- c("Estimate", "Std. Error", 
                        "t-value", "p-value")
-  # dimnames(cpMat) <- list(compParm, c("Estimate", "Std. Error", 
-  #                                     "t-value", "p-value"))
-  # # if (display) {
-  #   cat("\nComparison of parameter", paste("'", strVal, "'", 
-  #                                          sep = ""), "\n\n")
-  #   printCoefmat(cpMat)
-  # }
-  
-  # CLD
-  # adjust = "holm"
-  # cpMat <- tab
-  
   adjusted.P <- p.adjust(cpMat$`p-value`, method = as.character(adjust))
   cpMat$`p-value` <- as.vector(adjusted.P)
   
-  if(method == "pairwise"){
+  if(display == "pairwise"){
     return(cpMat)
   } else {
     p.logic <- as.vector(adjusted.P)
@@ -105,27 +87,10 @@ compVal <- function (object, SE, parameterNames, operator = "-",
        row.names(parMat) <- parameterNames
        parMat <- parMat[order(-parMat$Value),]
     }
-   #print(Letters)
    parMat$CLD = as.character(Letters$Letters)
-   # print(parMat)
   
   if(decreasing == F) { parMat <- parMat[order(parMat$Value), ]
   } else {parMat <- parMat[order(-parMat$Value), ] }
    return(parMat)
   }
-  
-  
-  # if(decreasing == T) {
-  # Letters <- multcompView::multcompLetters(p.logic, reverse=F,
-  #                                          threshold = level)
-  # } else {
-  # Letters <- multcompView::multcompLetters(p.logic, reverse = T,
-  #                                          threshold = level)  
-  # }
-  
-  #print(parMat)
-  #parMat$CLD <- as.character(Letters$Letters)
-  
-  # if(method == "pairwise") {return(cpMat)
-  # } else { return(parMat) }
 }

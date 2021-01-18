@@ -1,7 +1,8 @@
 gnlht <- function(object, ...){
-  
+  # Edited on 12/1/21 #
+   UseMethod("gnlht")
 }
-gnlht <- function(obj, func,  const = NULL, vcov. = vcov, parameterNames=names(coef(obj))){
+gnlht.old <- function(obj, func,  const = NULL, vcov. = vcov, parameterNames = names(coef(obj))){
    
    temp <- lapply(func, function(x) as.character(as.expression(x[[length(x)]])))
    func <- data.frame(form = unlist(temp))
@@ -70,15 +71,76 @@ gnlht <- function(obj, func,  const = NULL, vcov. = vcov, parameterNames=names(c
   retDF$"p-value" <- 2 * pt(retDF$"t-value", resDF, lower.tail = F)
   if(resDF == Inf) colnames(retDF)[length(colnames(retDF)) - 1] <- "Z-value"
   return(retDF)
-   }
+}
+gnlht.nlme <- function(object, func,  const = NULL, vcov. = vcov, 
+                     parameterNames = NULL, dfr = NULL){
+   coefs <- fixef(object)
+   dfr <- summary(modNlin)$df[2]   
+   if (is.function(vcov.)){
+            vcMat <- vcov.(object)
+        } else {vcMat <- vcov(object)}
    
-gnlht.numeric <- function(obj, func,  const = NULL, vcov. = vcov, parameterNames = NULL, dfr = NULL){
+  retList <- gnlht.default(coefs = coefs, func = func,  const = const,
+                           vcov. = vcMat, parameterNames = names(coef(object)),
+                           dfr = dfr)
+  return(retList)
+}   
+
+gnlht.lme <- function(object, func,  const = NULL, vcov. = vcov, 
+                     parameterNames = NULL, dfr = NULL){
+   coefs <- fixef(object)
+   dfr <- summary(modNlin)$df[2]   
+   if (is.function(vcov.)){
+            vcMat <- vcov.(object)
+        } else {vcMat <- vcov(object)}
+   
+  retList <- gnlht.default(coefs = coefs, func = func,  const = const,
+                           vcov. = vcMat, parameterNames = names(coef(object)),
+                           dfr = dfr)
+  return(retList)
+}   
+
+gnlht.lm <- function(object, func,  const = NULL, vcov. = vcov, 
+                     parameterNames = NULL, dfr = NULL){
+   coefs <- coef(object)
+   dfr <- summary(modNlin)$df[2]   
+   if (is.function(vcov.)){
+            vcMat <- vcov.(object)
+        } else {vcMat <- vcov(object)}
+   
+  retList <- gnlht.default(coefs = coefs, func = func,  const = const,
+                           vcov. = vcMat, parameterNames = names(coef(object)),
+                           dfr = dfr)
+  return(retList)
+}   
+
+gnlht.nls <- function(object, func,  const = NULL, vcov. = vcov, parameterNames = NULL, dfr = NULL){
+   coefs <- coef(object)
+   dfr <- summary(modNlin)$df[2]   
+   if (is.function(vcov.)){
+            vcMat <- vcov.(object)
+        } else {vcMat <- vcov(object)}
+   
+  retList <- gnlht.default(coefs = coefs, func = func,  const = const,
+                           vcov. = vcMat, parameterNames = names(coef(object)),
+                           dfr = dfr)
+  return(retList)
+}   
+   
+gnlht.numeric <- function(object, func,  const = NULL, vcov. = vcov, parameterNames = NULL, dfr = NULL){
+
+  retList <- gnlht.default(coefs = object, func = func,  const = const,
+                           vcov. = vcov., parameterNames = parameterNames,
+                           dfr = dfr)
+  return(retList)
+}   
+
+gnlht.default <- function(coefs, func,  const = NULL, vcov. = vcov, parameterNames = NULL, dfr = NULL){
    
    temp <- lapply(func, function(x) as.character(as.expression(x[[length(x)]])))
    func <- data.frame(form = unlist(temp))
-   coefs <- obj # se non ha i nomi errore
-   names(coefs) <- parameterNames # se non ci sono i nomi errore
-   vcMat <- vcov. # Se non è un array/matrix
+   names(coefs) <- parameterNames
+   vcMat <- vcov.
    
    if(is.null(const) == T){
       inputs <- func
@@ -97,14 +159,21 @@ gnlht.numeric <- function(obj, func,  const = NULL, vcov. = vcov, parameterNames
      # val <- plyr::ldply(lisRes)
      # val <- cbind(func, val)
    }else{
-      # Una sola costante è possibile, anche se può assumere più valori
-     inputs <- expand.grid(func$form, const[,1])
-     inputs
-     colnames(inputs) <- c("Form", colnames(const)[1]) 
+     # Una sola costante è possibile, anche se può assumere più valori
+     #inputs <- expand.grid(func$form, const[,1])
+     inputs <- apply(const, 2, function(col) expand.grid(func$form, col))
+     out <- inputs[[1]]
+     if(length(const[1,]) > 1){
+     for(i in 2:length(const[1,])){
+       out <- cbind(out, inputs[[i]][,2]) 
+     } }
+     inputs <- out
+     colnames(inputs) <- c("Form", colnames(const)) 
      val <- data.frame()
      for(i in 1:length(inputs[,1])){
-     valCost <- inputs[i, 2]
-     names(valCost) <- colnames(inputs)[2]
+     valCost <- inputs[i, 2:length(inputs[1,])]
+     names(valCost) <- colnames(inputs)[2:length(inputs[1,])]
+     # print(valCost)
      res <- car::deltaMethod(object=coefs, g=as.character(inputs$Form[i]), 
                       vcov.=vcMat, level = 0.95, 
                       constants = valCost)
@@ -124,7 +193,7 @@ gnlht.numeric <- function(obj, func,  const = NULL, vcov. = vcov, parameterNames
      # constList <- const %>% slice(rep(1:n(), length(func[,1])))
      # val <- cbind(funList, constList, val)
    }
-  #val
+  val
   lenVal <- length(val[1,]) 
   retDF <- val[, c(-(lenVal-1), -lenVal)]
   retDF$"t-value" <- abs(retDF$Estimate/retDF$SE)
@@ -132,14 +201,8 @@ gnlht.numeric <- function(obj, func,  const = NULL, vcov. = vcov, parameterNames
   retDF$"p-value" <- 2 * pt(retDF$"t-value", resDF, lower.tail = F)
   if(resDF == Inf) colnames(retDF)[length(colnames(retDF)) - 1] <- "Z-value"
   return(retDF)
-}   
+}
 
-# # Test
-# pn <- paste("b", 1:13, sep = "")
-# func <- as.list(paste("(1 -", pn, ")/", pn, sep = "")) 
-# func <- as.list(paste("exp(", pn, ") - 1", sep = "")) 
-# medieBack <- gnlht.numeric(coefs, func,  vcov. = sigma,
-#                            parameterNames = pn, dfr = 57)
-# row.names(medieBack) <- as.character(as.data.frame(medie)[,1])
-# medieBack <- medieBack[,-1]
-# medieBack
+
+
+

@@ -1,9 +1,9 @@
 {
-    "path" : "~/Documents/_DBXAndrea/Dropbox/_Lavoro/MyUtilities/RPackages/stats4biology/content/post",
-    "sortOrder" : [
+    "path": "~/Documents/_DBXAndrea/Dropbox/_Lavoro/MyUtilities/RPackages/aomisc/R",
+    "sortOrder": [
         {
-            "ascending" : true,
-            "columnIndex" : 2
+            "columnIndex": 2,
+            "ascending": true
         }
     ]
 }
