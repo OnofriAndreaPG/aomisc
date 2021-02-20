@@ -13,5 +13,5 @@ The package is freely available on github. Instructions for installation are als
 ``` 
 # You can install aomisc from GitHub
 # install.packages("devtools")
-# devtools::install_github("onofriAndreaPG/drcSeedGerm")
+# devtools::install_github("onofriAndreaPG/aomisc")
 ``` 
