@@ -3,7 +3,7 @@
 Overview
 --------
 
-This package contains several miscellaneous utilities to perform statistical analyses of agricultural data. The package is also used to support to the blog [The broken bridge between biologists and statisticians](www.statforbiology.com). 
+This package contains several miscellaneous utilities to perform statistical analyses of agricultural data. The package is also used to support to the blog [The broken bridge between biologists and statisticians](https://www.statforbiology.com). 
 
 Installation
 ------------
