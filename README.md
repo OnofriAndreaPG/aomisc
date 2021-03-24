@@ -3,7 +3,7 @@
 Overview
 --------
 
-This package contains several miscellaneous utilities to perform statistical analyses of agricultural data. The package is also used to support to the blog [The broken bridge between biologists and statisticians](www.statforbiology.com). 
+This package contains several miscellaneous utilities to perform statistical analyses of agricultural data. The package is also used to support to the blog [The broken bridge between biologists and statisticians](https://www.statforbiology.com). 
 
 Installation
 ------------
@@ -13,5 +13,5 @@ The package is freely available on github. Instructions for installation are als
 ``` 
 # You can install aomisc from GitHub
 # install.packages("devtools")
-# devtools::install_github("onofriAndreaPG/drcSeedGerm")
+# devtools::install_github("onofriAndreaPG/aomisc")
 ``` 
