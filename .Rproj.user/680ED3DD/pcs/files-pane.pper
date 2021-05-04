@@ -1,13 +1,13 @@
 {
-    "path" : "~/Documents/_DBXAndrea/Dropbox/_Lavoro/MyUtilities/RPackages/aomisc/R",
-    "sortOrder" : [
+    "path": "~/Documents/_DBXAndrea/Dropbox/_Lavoro/MyUtilities/RPackages/aomisc",
+    "sortOrder": [
         {
-            "ascending" : true,
-            "columnIndex" : 2
+            "columnIndex": 2,
+            "ascending": true
         },
         {
-            "ascending" : false,
-            "columnIndex" : 4
+            "columnIndex": 4,
+            "ascending": false
         }
     ]
 }

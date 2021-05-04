@@ -6,13 +6,12 @@ pairComp <- function(parm, SE, nams = NULL, dfr = NULL, adjust = "none",
   # Updated on 18/1/2021
   chk <- names(parm)
   
-    if(is.null(chk)){
-      if(is.null(nams)){
+    if(!is.null(nams)){
+      names(parm) <- nams
+    } else {
+      if(is.null(chk)){
         names(parm) <- as.character(1:length(parm)) 
-      } else {
-        names(parm) <- nams
-      }
-    }
+      } }
   df <- ifelse(is.null(dfr), Inf, dfr)
   pairList <- list(coef = parm, vcov = diag(SE^2), df = df)
   class(pairList) = "parm"

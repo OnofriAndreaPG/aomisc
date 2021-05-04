@@ -1,15 +1,16 @@
 # Bragg's equation
-bragg.3.fun <- function(X, b, d, e){
-  d * exp(- b * (X - e)^2)
+logBragg.3.fun <- function(X, b, d, e){
+  d * exp(- b * (log(X + 0.000001) - e)^2)
 }
 
-DRC.bragg.3 <- function(){
+# Da fare
+DRC.logBragg.3 <- function(){
   fct <- function(x, parm) {
-    bragg.3.fun(x, parm[,1], parm[,2], parm[,3])
+    logBragg.3.fun(x, parm[,1], parm[,2], parm[,3])
   }
   ssfct <- function(data){
     # Get the data     
-    x <- data[, 1]
+    x <- log(data[, 1] + 0.000001)
     y <- data[, 2]
     
     d <- max(y)
@@ -24,7 +25,7 @@ DRC.bragg.3 <- function(){
     return( start )
   }
   names <- c("b", "d", "e")
-  text <- "Bragg equation with three parameters"
+  text <- "log-Bragg equation with three parameters"
     
   ## Returning the function with self starter and names
   returnList <- list(fct = fct, ssfct = ssfct, names = names, text = text)
