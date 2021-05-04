@@ -6,7 +6,11 @@ R2nls <- function(object){
   if (inherits(object, "nls")){
     formula <- as.formula(summary(object)$formula)
     varNames <- all.vars(formula)
-    Y <- eval(object$data)[,varNames[1]]
+    if(!is.environment(eval(object$data))){
+      Y <- eval(object$data)[,varNames[1]]
+    } else {
+      Y <- get(varNames[1])
+    }
     dfMod <- summary(object)$df[2]
     sigma <- summary(object)$sigma
   } else if (inherits(object, "drc")){
