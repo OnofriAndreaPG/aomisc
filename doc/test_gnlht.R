@@ -45,6 +45,33 @@ pred <- gnlht(modNlin, funList, const = propdF)
 head(pred)
 tail(pred)
 
+# Use with drm and nls
+rm(list=ls())
+library(aomisc)
+data(speciesArea)
+model <- drm(numSpecies ~ Area, fct = DRC.powerCurve(),
+             data = speciesArea)
+model2 <- nls(numSpecies ~ NLS.powerCurve(Area, a, b),
+             data = speciesArea)
+
+# First derivative
+D(expression(a * X^b), "X")
+## a * (X^(b - 1) * b)
+
+# Second derivative
+D(D(expression(a * X^b), "X"), "X")
+## a * (X^((b - 1) - 1) * (b - 1) * b)
+
+funList <- list(~ a * (X^(b - 1) * b), ~ a * (X^((b - 1) - 1) * (b - 1) * b))
+propdF <- data.frame(X = seq(1, 5, 1))
+pred <- gnlht(model, funList, const = propdF, parameterNames = c("a", "b"))
+pred
+pred2 <- gnlht(model2, funList, const = propdF, parameterNames = c("a", "b"))
+pred2
+# Compare parameters #######à
+funList <- list(~k1 - k2, ~k1 - k3, ~k1 - k4)
+gnlht(modNlin, funList)
+
 # Back transformation of means
 library(emmeans)
 data(mixture)

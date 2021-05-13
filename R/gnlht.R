@@ -133,7 +133,23 @@ gnlht.nls <- function(object, func,  const = NULL, vcov. = vcov, parameterNames 
                            vcov. = vcMat, parameterNames = parameterNames,
                            dfr = dfr)
   return(retList)
-}   
+}
+
+gnlht.drc <- function(object, func,  const = NULL, vcov. = vcov, parameterNames = NULL, dfr = NULL){
+   coefs <- coef(object)
+   tmp <- summary(object)
+   dfr <- summary(object)$df.residual 
+   if (is.function(vcov.)){
+            vcMat <- vcov.(object)
+        } else {vcMat <- vcov(object)}
+  if(is.null(parameterNames)){
+     parameterNames = names(coef(object))
+  }       
+  retList <- gnlht.default(coefs = coefs, func = func,  const = const,
+                           vcov. = vcMat, parameterNames = parameterNames,
+                           dfr = dfr)
+  return(retList)
+} 
    
 gnlht.numeric <- function(object, func,  const = NULL, vcov. = vcov, 
                           parameterNames = NULL, dfr = NULL)

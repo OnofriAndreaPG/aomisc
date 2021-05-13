@@ -47,6 +47,7 @@ S3method(gnlht, lm)
 S3method(gnlht, nls)
 S3method(gnlht, lme)
 S3method(gnlht, nlme)
+S3method(gnlht, drc)
 S3method(gnlht, numeric)
 
 
