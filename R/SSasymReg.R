@@ -4,7 +4,7 @@ asymReg.fun <- function(predictor, init, m, plateau) {
                       plateau - (plateau - init) * exp (- m * x)
 }
 
-asymReg.Init <- function(mCall, LHS, data) {
+asymReg.Init <- function(mCall, LHS, data, ...) {
           xy <- sortedXyData(mCall[["predictor"]], LHS, data)
           x <-  xy[, "x"]; y <- xy[, "y"]
           plateau <- NLSstRtAsymptote(xy)

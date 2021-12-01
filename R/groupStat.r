@@ -1,8 +1,8 @@
 #crea le statistiche descrittive
 groupStat <- function (x, cols, treat, FUN=sum){
-    #x è un data frame
-    #cols è il range di colonne da analizzare
-    #treat è il range di colonne factor
+    #x un data frame
+    #cols il range di colonne da analizzare
+    #treat il range di colonne factor
     means <- c()
     classe <- c()
     for(i in 1:length(treat)) classe<-paste(classe,x[,treat[i]], sep="_")

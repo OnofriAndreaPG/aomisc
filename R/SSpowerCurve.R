@@ -3,7 +3,7 @@ powerCurve.fun <- function(predictor, a, b) {
   a * ( predictor ^ b )
 }
 
-powerCurve.Init <- function(mCall, LHS, data) {
+powerCurve.Init <- function(mCall, LHS, data, ...) {
   xy <- sortedXyData(mCall[["predictor"]], LHS, data)
   lmFit <- lm(log(xy[, "y"]) ~ log(xy[, "x"]))
   coefs <- coef(lmFit)

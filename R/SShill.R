@@ -3,7 +3,7 @@ hillCurveMean <- function(predictor, a, b, c) {
   (a * predictor^c)/(b + predictor^c)
 }
 
-hillCurveInit <- function(mCall, LHS, data) {
+hillCurveInit <- function(mCall, LHS, data, ...) {
   xy <- sortedXyData(mCall[["predictor"]], LHS, data)
   x <-  xy[, "x"]; y <- xy[, "y"]
   a <- max(y) * 1.05

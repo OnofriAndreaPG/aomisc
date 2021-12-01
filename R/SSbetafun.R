@@ -35,7 +35,7 @@ DRC.beta <- function(){
   invisible(returnList)
 }
 
-beta.init <- function(mCall, LHS, data) {
+beta.init <- function(mCall, LHS, data, ...) {
     xy <- sortedXyData(mCall[["X"]], LHS, data)
     x <-  xy[, "x"]; y <- xy[, "y"]
     

@@ -4,7 +4,7 @@ logCurve.fun <- function(predictor, a, b) {
   a  + b * log(x)
 }
 
-logCurve.Init <- function(mCall, LHS, data) {
+logCurve.Init <- function(mCall, LHS, data, ...) {
   xy <- sortedXyData(mCall[["predictor"]], LHS, data)
   x <-  xy[, "x"]; y <- xy[, "y"]
   pseudoY <-  y 
@@ -85,7 +85,7 @@ logCurveNI.fun <- function(predictor, b) {
   b * log(x)
 }
 
-logCurveNI.Init <- function(mCall, LHS, data) {
+logCurveNI.Init <- function(mCall, LHS, data, ...) {
   xy <- sortedXyData(mCall[["predictor"]], LHS, data)
   x <-  xy[, "x"]; y <- xy[, "y"]
   pseudoY <-  y 

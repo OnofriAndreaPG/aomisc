@@ -32,7 +32,7 @@ DRC.lorentz.3 <- function(){
   invisible(returnList)
 }
 
-lorentz.3.init <- function(mCall, LHS, data) {
+lorentz.3.init <- function(mCall, LHS, data, ...) {
     xy <- sortedXyData(mCall[["X"]], LHS, data)
     x <-  xy[, "x"]; y <- xy[, "y"]
     
@@ -87,7 +87,7 @@ DRC.lorentz.4 <- function(){
   invisible(returnList)
 }
 
-lorentz.4.init <- function(mCall, LHS, data) {
+lorentz.4.init <- function(mCall, LHS, data, ...) {
     xy <- sortedXyData(mCall[["X"]], LHS, data)
     x <-  xy[, "x"]; y <- xy[, "y"]
     

@@ -5,7 +5,7 @@ W2.4.fun <- function(predictor, b, c, d, e) {
   c + (d - c) * (1 - exp( - exp (b * (log(x + 0.0000001) - log(e)))))
 }
 
-W2.4.init <- function(mCall, LHS, data) {
+W2.4.init <- function(mCall, LHS, data, ...) {
   xy <- sortedXyData(mCall[["predictor"]], LHS, data)
   x <-  xy[, "x"]; y <- xy[, "y"]
   
@@ -35,7 +35,7 @@ W2.3.fun <- function(predictor, b, d, e) {
                       d * (1 - exp( - exp (b * (log(x + 0.0000001) - log(e)))))
 }
 
-W2.3.init <- function(mCall, LHS, data) {
+W2.3.init <- function(mCall, LHS, data, ...) {
           xy <- sortedXyData(mCall[["predictor"]], LHS, data)
           x <-  xy[, "x"]; y <- xy[, "y"]
           
@@ -61,7 +61,7 @@ W2.2.fun <- function(predictor, b, e) {
   1 - exp( - exp (b * (log(x + 0.0000001) - log(e))))
 }
 
-W2.2.init <- function(mCall, LHS, data) {
+W2.2.init <- function(mCall, LHS, data, ...) {
   xy <- sortedXyData(mCall[["predictor"]], LHS, data)
   x <-  xy[, "x"]; y <- xy[, "y"]
   

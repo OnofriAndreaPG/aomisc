@@ -1,4 +1,4 @@
-"boxcox.nls" <- function(object, lambda = seq(-2, 2, 1/10), plotit = TRUE, start,
+"boxcox.nls" <- function(object, lambda = seq(-2, 2, 1/10), plotit = FALSE, start,
 eps = 1/50, bcAdd = 0, level = 0.95, xlab = expression(lambda), ylab = "log-likelihood", ...)
 {
     ## Defining the Box-Cox modified power transformations

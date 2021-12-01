@@ -3,7 +3,7 @@ expoGrowth.fun <- function(predictor, a, b) {
   a * exp(b * predictor)
 }
 
-expoGrowth.Init <- function(mCall, LHS, data) {
+expoGrowth.Init <- function(mCall, LHS, data, ...) {
   xy <- sortedXyData(mCall[["predictor"]], LHS, data)
   x <-  xy[, "x"]; y <- xy[, "y"]
   ## Linear regression on pseudo y values

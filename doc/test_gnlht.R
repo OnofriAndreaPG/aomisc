@@ -11,7 +11,7 @@ modNlin <- nls(Conc ~ A[Herbicide] * exp(-k[Herbicide] * Time),
 summary(modNlin)
 
 
-# Compare parameters #######à
+# Compare parameters #######
 funList <- list(~k1 - k2, ~k1 - k3, ~k1 - k4)
 gnlht(modNlin, funList)
 
@@ -68,7 +68,7 @@ pred <- gnlht(model, funList, const = propdF, parameterNames = c("a", "b"))
 pred
 pred2 <- gnlht(model2, funList, const = propdF, parameterNames = c("a", "b"))
 pred2
-# Compare parameters #######à
+# Compare parameters #######
 funList <- list(~k1 - k2, ~k1 - k3, ~k1 - k4)
 gnlht(modNlin, funList)
 

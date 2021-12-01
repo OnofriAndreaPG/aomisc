@@ -3,7 +3,7 @@ linear.fun <- function(predictor, a, b) {
   a + b * predictor
 }
 
-linear.Init <- function(mCall, LHS, data) {
+linear.Init <- function(mCall, LHS, data, ...) {
   xy <- sortedXyData(mCall[["predictor"]], LHS, data)
   lmFit <- lm( (xy[, "y"]) ~ xy[, "x"] )
   coefs <- coef(lmFit)
@@ -85,7 +85,7 @@ linearOrigin.fun <- function(predictor, b) {
   b * predictor
 }
 
-linearOrigin.Init <- function(mCall, LHS, data) {
+linearOrigin.Init <- function(mCall, LHS, data, ...) {
   xy <- sortedXyData(mCall[["predictor"]], LHS, data)
   lmFit <- lm((xy[, "y"]) ~ xy[, "x"]-1)
   coefs <- coef(lmFit)

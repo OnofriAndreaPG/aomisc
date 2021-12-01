@@ -35,11 +35,10 @@ export(angularTransform, ma,
        AMMI, AMMImeans, GGE, GGEmeans, CVA,
        biplot.met, stability.met, summary.met,
        getVarCov.gls, getVarCov.lme, anova.aovList,
-       plot.nls, plotnls, plotnls.nls, boxcox.nls, R2nls,
+       plotnls, boxcox.nls, R2nls,
        gnlht, compVal, pairComp, deviance.drc)
 
 ## S3 methods
-S3method(plot, nls)
 S3method(deviance, drc)
 S3method(boxcox, nls)
 S3method(anova, aovList)

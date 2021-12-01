@@ -4,7 +4,7 @@ G4.fun <- function(predictor, b, c, d, e) {
   c + (d - c) * (exp (- exp ( - b * ( x - e))))
 }
 
-G4.Init <- function(mCall, LHS, data) {
+G4.Init <- function(mCall, LHS, data, ...) {
   xy <- sortedXyData(mCall[["predictor"]], LHS, data)
   x <-  xy[, "x"]; y <- xy[, "y"]
   d <- max(y) * 1.05
@@ -27,7 +27,7 @@ G3.fun <- function(predictor, b, d, e) {
   d * (exp (- exp ( - b * ( x - e))))
 }
 
-G3.Init <- function(mCall, LHS, data) {
+G3.Init <- function(mCall, LHS, data, ...) {
   xy <- sortedXyData(mCall[["predictor"]], LHS, data)
   x <-  xy[, "x"]; y <- xy[, "y"]
   # y <- beetGrowth$weightFree; x <- beetGrowth$DAE 
@@ -50,7 +50,7 @@ G2.fun <- function(predictor, b, e) {
   exp (- exp ( - b * ( x - e)))
 }
 
-G2.Init <- function(mCall, LHS, data) {
+G2.Init <- function(mCall, LHS, data, ...) {
   xy <- sortedXyData(mCall[["predictor"]], LHS, data)
   x <-  xy[, "x"]; y <- xy[, "y"]
                 

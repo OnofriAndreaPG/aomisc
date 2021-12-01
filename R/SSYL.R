@@ -3,7 +3,7 @@ YL.fun <- function(predictor, i, A) {
   i * predictor/(1 + i/A * predictor)
 }
 
-YL.Init <- function(mCall, LHS, data) {
+YL.Init <- function(mCall, LHS, data, ...) {
   xy <- sortedXyData(mCall[["predictor"]], LHS, data)
   x <- xy[, "x"]; y <- xy[, "y"]
   pseudoX <- 1 / x[x > 0]; pseudoY <- 1 / y[x > 0]

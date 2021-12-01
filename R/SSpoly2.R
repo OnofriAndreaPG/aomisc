@@ -3,7 +3,7 @@ poly2.fun <- function(predictor, a, b, c) {
   a + b * predictor + c * (predictor^2)
 }
 
-poly2.Init <- function(mCall, LHS, data) {
+poly2.Init <- function(mCall, LHS, data, ...) {
   xy <- sortedXyData(mCall[["predictor"]], LHS, data)
   lmFit <- lm((xy[, "y"]) ~ xy[, "x"] + I( xy[, "x"]^2))
   coefs <- coef(lmFit)

@@ -13,7 +13,7 @@ Rational.fun <- function(predictor, a, b, c) {
                       (b + c*x) / (1 + a*x)
 }
 
-Rational.Init <- function(mCall, LHS, data) {
+Rational.Init <- function(mCall, LHS, data, ...) {
           xy <- sortedXyData(mCall[["predictor"]], LHS, data)
           x <-  xy[, "x"]; y <- xy[, "y"]
           pseudoY <-  y 

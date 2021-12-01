@@ -33,7 +33,7 @@ gnlht.old <- function(obj, func,  const = NULL, vcov. = vcov, parameterNames = n
      # val <- plyr::ldply(lisRes)
      # val <- cbind(func, val)
    }else{
-      # Una sola costante è possibile, anche se può assumere più valori
+      # Una sola costante is possibile, anche se can assumere piu valori
      inputs <- expand.grid(func$form, const[,1])
      inputs
      colnames(inputs) <- c("Form", colnames(const)[1]) 
@@ -186,7 +186,7 @@ gnlht.default <- function(coefs, func,  const = NULL, vcov. = vcov,
      # val <- plyr::ldply(lisRes)
      # val <- cbind(func, val)
    }else{
-     # Una sola costante è possibile, anche se può assumere più valori
+     # Una sola costante e possibile, anche se puo assumere piu valori
      #inputs <- expand.grid(func$form, const[,1])
      inputs <- apply(const, 2, function(col) expand.grid(func$form, col))
      out <- inputs[[1]]

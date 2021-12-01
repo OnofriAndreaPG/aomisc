@@ -6,7 +6,7 @@ LL4.fun <- function(predictor, b, c, d, e) {
 
 #NLSLL.4mean <- deriv(~c+(d-c)/(1+exp(b*(log(predictor+0.000001)-log(ED50)))),c("c","d","b","ED50"),function(predictor,c,d,b,ED50){})
 
-LL4.Init <- function(mCall, LHS, data) {
+LL4.Init <- function(mCall, LHS, data, ...) {
   xy <- sortedXyData(mCall[["predictor"]], LHS, data)
   x <-  xy[, "x"]; y <- xy[, "y"]
   c <- min(y) * 0.95
@@ -31,7 +31,7 @@ LL3.fun <- function(predictor, b, d, e) {
                       d/(1+exp(-b*(log(x+0.000001)-log(e))))
 }
 
-LL3.init <- function(mCall, LHS, data) {
+LL3.init <- function(mCall, LHS, data, ...) {
           xy <- sortedXyData(mCall[["predictor"]], LHS, data)
           x <-  xy[, "x"]; y <- xy[, "y"]
           d <- max(y) * 1.05              
@@ -54,7 +54,7 @@ LL2.fun <- function(predictor, b, e) {
   1/(1+exp(-b*(log(x+0.000001)-log(e))))
 }
 
-LL2.init <- function(mCall, LHS, data) {
+LL2.init <- function(mCall, LHS, data, ...) {
   xy <- sortedXyData(mCall[["predictor"]], LHS, data)
   x <-  xy[, "x"]; y <- xy[, "y"]
   d <- 1              

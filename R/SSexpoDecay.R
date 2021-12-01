@@ -3,7 +3,7 @@ expoDecay.fun <- function(predictor, C0, k) {
   C0 * exp(- k * predictor)
 }
 
-expoDecay.Init <- function(mCall, LHS, data) {
+expoDecay.Init <- function(mCall, LHS, data, ...) {
   xy <- sortedXyData(mCall[["predictor"]], LHS, data)
   lmFit <- lm(log(xy[, "y"]) ~ xy[, "x"])
   coefs <- coef(lmFit)
@@ -14,7 +14,8 @@ expoDecay.Init <- function(mCall, LHS, data) {
   value
 }
 
-NLS.expoDecay <- selfStart(expoDecay.fun, expoDecay.Init, parameters=c("C0", "k"))
+NLS.expoDecay <- selfStart(expoDecay.fun, expoDecay.Init,
+                           parameters=c("C0", "k"))
 
 "DRC.expoDecay" <-
   function(fixed = c(NA, NA), names = c("init", "k"))

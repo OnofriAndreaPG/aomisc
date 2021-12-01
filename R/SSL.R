@@ -4,7 +4,7 @@ L4.fun <- function(predictor, b, c, d, e) {
   c + (d - c)/(1 + exp( - b* (x - e)))
 }
 
-L4.Init <- function(mCall, LHS, data) {
+L4.Init <- function(mCall, LHS, data, ...) {
   xy <- sortedXyData(mCall[["predictor"]], LHS, data)
   x <-  xy[, "x"]; y <- xy[, "y"]
   d <- max(y) * 1.05
@@ -29,7 +29,7 @@ L3.fun <- function(predictor, b, d, e) {
   d/(1 + exp( - b* (x - e)))
 }
 
-L3.Init <- function(mCall, LHS, data) {
+L3.Init <- function(mCall, LHS, data, ...) {
   xy <- sortedXyData(mCall[["predictor"]], LHS, data)
   x <-  xy[, "x"]; y <- xy[, "y"]
   # y <- beetGrowth$weightFree; x <- beetGrowth$DAE 
@@ -54,7 +54,7 @@ L2.fun <- function(predictor, b, e) {
   1/(1 + exp( - b* (x - e)))
 }
 
-L2.Init <- function(mCall, LHS, data) {
+L2.Init <- function(mCall, LHS, data, ...) {
   xy <- sortedXyData(mCall[["predictor"]], LHS, data)
   x <-  xy[, "x"]; y <- xy[, "y"]
   d <- 1              

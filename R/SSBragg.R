@@ -32,7 +32,7 @@ DRC.bragg.3 <- function(){
   invisible(returnList)
 }
 
-bragg.3.init <- function(mCall, LHS, data) {
+bragg.3.init <- function(mCall, LHS, data, ...) {
     xy <- sortedXyData(mCall[["X"]], LHS, data)
     x <-  xy[, "x"]; y <- xy[, "y"]
     
@@ -87,7 +87,7 @@ DRC.bragg.4 <- function(){
   invisible(returnList)
 }
 
-bragg.4.init <- function(mCall, LHS, data) {
+bragg.4.init <- function(mCall, LHS, data, ...) {
     xy <- sortedXyData(mCall[["X"]], LHS, data)
     x <-  xy[, "x"]; y <- xy[, "y"]
     

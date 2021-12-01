@@ -4,7 +4,7 @@ negExp.fun <- function(predictor, a, c) {
                       a * (1 - exp (- c * x))
 }
 
-negExp.Init <- function(mCall, LHS, data) {
+negExp.Init <- function(mCall, LHS, data, ...) {
           xy <- sortedXyData(mCall[["predictor"]], LHS, data)
           x <-  xy[, "x"]; y <- xy[, "y"]
           plateau <- max(y) * 1.05        
@@ -85,7 +85,7 @@ negExpDist.fun <- function(predictor, c) {
     1 - exp (- c * x)
 }
 
-negExpDist.Init <- function(mCall, LHS, data) {
+negExpDist.Init <- function(mCall, LHS, data, ...) {
     xy <- sortedXyData(mCall[["predictor"]], LHS, data)
     x <-  xy[, "x"]; y <- xy[, "y"]
     ## Linear regression on pseudo y values

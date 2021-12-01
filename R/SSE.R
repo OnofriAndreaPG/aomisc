@@ -4,7 +4,7 @@ E4.fun <- function(predictor, b, c, d, e) {
   c + (d - c) * (1 - exp( - exp ( b * ( x - e))))
 }
 
-E4.Init <- function(mCall, LHS, data) {
+E4.Init <- function(mCall, LHS, data, ...) {
   xy <- sortedXyData(mCall[["predictor"]], LHS, data)
   x <-  xy[, "x"]; y <- xy[, "y"]
   
@@ -24,7 +24,7 @@ E3.fun <- function(predictor, b, d, e) {
   d * (1 - exp( - exp ( b * ( x - e))))
 }
 
-E3.Init <- function(mCall, LHS, data) {
+E3.Init <- function(mCall, LHS, data, ...) {
   xy <- sortedXyData(mCall[["predictor"]], LHS, data)
   x <-  xy[, "x"]; y <- xy[, "y"]
   
@@ -44,7 +44,7 @@ E2.fun <- function(predictor, b, e) {
   1 - exp( - exp ( b * ( x - e)))
 }
 
-E2.Init <- function(mCall, LHS, data) {
+E2.Init <- function(mCall, LHS, data, ...) {
   xy <- sortedXyData(mCall[["predictor"]], LHS, data)
   x <-  xy[, "x"]; y <- xy[, "y"]
   

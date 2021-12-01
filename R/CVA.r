@@ -3,6 +3,8 @@ CVA<-function(dataset, groups){
 ## dataset is a multidimensional data.frame of observations
 ## groups is a vector coding for groupings
 ## This part performs a standardisation of data	
+    groups <- as.factor(groups)
+    dataset <- as.matrix(dataset)
   	numdati <- length(dataset[,1])
   	numcolonne <- length(dataset[1,])
   	numclasses <- length(levels(groups))
@@ -11,7 +13,7 @@ CVA<-function(dataset, groups){
 	  canvarnames<-paste("CAN", canvarnames,sep="")
   
   	#Centratura e calcolo coefficienti canonici raw
-  	dataset.centrata <- scale(dataset, scale = F)
+  	dataset.centrata <- scale(dataset, center = TRUE, scale = F)
   	Tc <- t(dataset.centrata)%*%dataset.centrata
   	i <- array(c(1:numcolonne,1:numcolonne),dim=c(numcolonne,2))
   	dev <- Tc[i]
@@ -30,10 +32,10 @@ CVA<-function(dataset, groups){
   	raw <- t( apply(V1c, 1, function(x) x / scal) )
   	if(nrow(raw) < 2) raw <- t(raw)
   	dimnames(raw) <- list(dimnames(dataset)[[2]], canvarnames)
-  	raw
+  	# raw
   	
   	#Standardizzazione e calcolo coefficienti standardizzati
-  	dataset.standardizzata <- scale(dataset, scale = T)
+  	dataset.standardizzata <- scale(dataset, center = TRUE, scale = TRUE)
     maovst <- manova(dataset.standardizzata ~ groups)
   	fitted <- maovst$fitted
   	residui<-maovst$residuals
@@ -57,11 +59,13 @@ CVA<-function(dataset, groups){
 		dev1 <- varcovar[i]
 		devst1 <- sqrt(dev1/(numdati-length(levels(groups))))
 		scaling <- 1/devst1
+		# print(scaling)
 		identita <- matrix(c(0),numcanonical,numcanonical)
 		identita[i] <- scaling
+		# print(V1)
 		coefst <- V1 %*% identita
 	  dimnames(coefst) <- list(dimnames(dataset)[[2]], canvarnames)
-  	coefst
+  	# coefst
 
 ## calculation of raw canonical coefficients
 	  # dev2 <- t(dataset.centrata)%*%dataset.centrata

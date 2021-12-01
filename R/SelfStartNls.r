@@ -4,7 +4,7 @@ monoGrowthMean <- function(predictor, a, b, c) {
                       a - (a - b) * exp (- c * x)
 }
 
-monoGrowthInit <- function(mCall, LHS, data) {
+monoGrowthInit <- function(mCall, LHS, data, ...) {
           xy <- sortedXyData(mCall[["predictor"]], LHS, data)
           x <-  xy[, "x"]; y <- xy[, "y"]
           plateau <- max(y) * 1.05
@@ -29,7 +29,7 @@ logiGrowth1Mean <- function(predictor, a, b, c) {
                       a / (1 + exp(- b * x + c))
 }
 
-logiGrowth1Init <- function(mCall, LHS, data) {
+logiGrowth1Init <- function(mCall, LHS, data, ...) {
           xy <- sortedXyData(mCall[["predictor"]], LHS, data)
           x <-  xy[, "x"]; y <- xy[, "y"]
           
@@ -54,7 +54,7 @@ logiGrowth2Mean <- function(predictor, a, b, c) {
                       a / (1 + b * exp(- c * x))
 }
 
-logiGrowth2Init <- function(mCall, LHS, data) {
+logiGrowth2Init <- function(mCall, LHS, data, ...) {
           xy <- sortedXyData(mCall[["predictor"]], LHS, data)
           x <-  xy[, "x"]; y <- xy[, "y"]
           
@@ -79,7 +79,7 @@ logiGrowth3Mean <- function(predictor, init, m, plateau) {
                       init * plateau / (init + (plateau - init) * exp( - m * x))
 }
 
-logiGrowth3Init <- function(mCall, LHS, data) {
+logiGrowth3Init <- function(mCall, LHS, data, ...) {
 			xy <- sortedXyData(mCall[["predictor"]], LHS, data)
          x <-  xy[, "x"]; y <- xy[, "y"]
           
@@ -103,7 +103,7 @@ logiGrowth4Mean <- function(predictor, t50, m, plateau) {
                       x <- predictor
                       plateau / (1 + exp(- m * (x - t50)))}
 
-logiGrowth4Init <- function(mCall, LHS, data) {
+logiGrowth4Init <- function(mCall, LHS, data, ...) {
 			xy <- sortedXyData(mCall[["predictor"]], LHS, data)
          x <-  xy[, "x"]; y <- xy[, "y"]
           
@@ -127,7 +127,7 @@ logistic5Mean <- function(predictor, a, b, c, d) {
                       c + (d-c) / (1 + b * exp(a * x))
 }
 
-logistic5Init <- function(mCall, LHS, data) {
+logistic5Init <- function(mCall, LHS, data, ...) {
           xy <- sortedXyData(mCall[["predictor"]], LHS, data)
           x <-  xy[, "x"]; y <- xy[, "y"]
           
@@ -152,7 +152,7 @@ logistic6Mean <- function(predictor, a, b) {
                       1 / (1 + b * exp(- a * x))
 }
 
-logistic6Init <- function(mCall, LHS, data) {
+logistic6Init <- function(mCall, LHS, data, ...) {
           xy <- sortedXyData(mCall[["predictor"]], LHS, data)
           x <-  xy[, "x"]; y <- xy[, "y"]
           
@@ -180,7 +180,7 @@ gompGrowth1Mean <- function(predictor, a, m, c) {
                       a * exp( - (m/c) * exp (-c * x))
 }
 
-gompGrowth1Init <- function(mCall, LHS, data) {
+gompGrowth1Init <- function(mCall, LHS, data, ...) {
           xy <- sortedXyData(mCall[["predictor"]], LHS, data)
           x <-  xy[, "x"]; y <- xy[, "y"]
           
@@ -206,7 +206,7 @@ gompGrowth2Mean <- function(predictor, a, b, c) {
                       a * exp( - exp (b - c*x))
 }
 
-gompGrowth2Init <- function(mCall, LHS, data) {
+gompGrowth2Init <- function(mCall, LHS, data, ...) {
           xy <- sortedXyData(mCall[["predictor"]], LHS, data)
           x <-  xy[, "x"]; y <- xy[, "y"]
           
@@ -232,7 +232,7 @@ gompGrowth3Mean <- function(predictor, a, b, c) {
                       a * exp( -b * exp (-c*x))
 }
 
-gompGrowth3Init <- function(mCall, LHS, data) {
+gompGrowth3Init <- function(mCall, LHS, data, ...) {
           xy <- sortedXyData(mCall[["predictor"]], LHS, data)
           x <-  xy[, "x"]; y <- xy[, "y"]
           
@@ -259,7 +259,7 @@ extremeValueMean <- function(predictor, a, b, c) {
                       a * (1 - exp( - exp (b - c*x)))
 }
 
-extremeValueInit <- function(mCall, LHS, data) {
+extremeValueInit <- function(mCall, LHS, data, ...) {
           xy <- sortedXyData(mCall[["predictor"]], LHS, data)
           x <-  xy[, "x"]; y <- xy[, "y"]
           
@@ -288,7 +288,7 @@ AvsPFDMean <- function(predictor, Rd, Amax, Qapp) {
                       Rd+Amax*(1-exp((-Qapp/Amax)*x))
 }
 
-AvsPFDInit <- function(mCall, LHS, data) {
+AvsPFDInit <- function(mCall, LHS, data, ...) {
           xy <- sortedXyData(mCall[["predictor"]], LHS, data)
           x <-  xy[, "x"]; y <- xy[, "y"]
 	  interc <- min(y)
@@ -313,7 +313,7 @@ polyInv.3mean <- function(predictor, a, b, c) {
                       1/(a + b*x + c*x^2)
 }
 
-polyInv.3Init <- function(mCall, LHS, data) {
+polyInv.3Init <- function(mCall, LHS, data, ...) {
           xy <- sortedXyData(mCall[["predictor"]], LHS, data)
           x <-  xy[, "x"]; y <- xy[, "y"]
           ## Linear regression on pseudo y values
@@ -334,7 +334,7 @@ polyInv.4mean <- function(predictor, a, b, c) {
                       x/(a + b*x + c*x^2)
 }
 
-polyInv.4Init <- function(mCall, LHS, data) {
+polyInv.4Init <- function(mCall, LHS, data, ...) {
           xy <- sortedXyData(mCall[["predictor"]], LHS, data)
           x <-  xy[, "x"]; y <- xy[, "y"]
           ## Linear regression on pseudo y values

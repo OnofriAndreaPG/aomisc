@@ -1,8 +1,8 @@
 summary.met <- function(Yield, Var, Env){
-#Questa funzione calcola le statistiche descrittive per prove varietali
-#ripetute in più ambienti, anche sbilanciate. ATTENZIONE: lavora sulle 
-#medie ambientali delle varietà (non sulle repliche).
-#Data: 15/04/2009
+# Questa funzione calcola le statistiche descrittive per prove varietali
+# ripetute in molti ambienti, anche sbilanciate. ATTENZIONE: lavora sulle 
+# medie ambientali delle varieta (non sulle repliche).
+# Data: 15/04/2009
 
 #Statistiche descrittive
 result <- data.frame("Count"=tapply(Yield, Var, length))
@@ -54,10 +54,10 @@ Index
 }
 
 stability.met <- function(Yield, Var, Env){
-#Questa funzione calcola le statistiche descrittive per prove varietali
-#ripetute in più ambienti, anche sbilanciate. ATTENZIONE: lavora sulle 
-#medie ambientali delle varietà (non sulle repliche). calcola gli indici
-# produttivi e di stabilità
+# Questa funzione calcola le statistiche descrittive per prove varietali
+# ripetute in molti ambienti, anche sbilanciate. ATTENZIONE: lavora sulle 
+# medie ambientali delle varieta (non sulle repliche). calcola gli indici
+# produttivi e di stabilita
 #Data: 25/11/2009
 
 MedieEnv <- tapply(Yield, Env, mean)[Env]
