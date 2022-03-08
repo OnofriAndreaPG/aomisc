@@ -35,7 +35,7 @@ export(angularTransform, ma,
        AMMI, AMMImeans, GGE, GGEmeans, CVA,
        biplot.met, stability.met, summary.met,
        getVarCov.gls, getVarCov.lme, anova.aovList,
-       plotnls, boxcox.nls, R2nls,
+       plotnls, boxcox.nls, R2nls, plot.nls,
        gnlht, compVal, pairComp, deviance.drc)
 
 ## S3 methods
@@ -48,5 +48,6 @@ S3method(gnlht, lme)
 S3method(gnlht, nlme)
 S3method(gnlht, drc)
 S3method(gnlht, numeric)
+S3method(plot, nls)
 
 

@@ -14,7 +14,7 @@ CVA<-function(dataset, groups){
   
   	#Centratura e calcolo coefficienti canonici raw
   	dataset.centrata <- scale(dataset, center = TRUE, scale = F)
-  	Tc <- t(dataset.centrata)%*%dataset.centrata
+  	Tc <- t(dataset.centrata) %*% dataset.centrata
   	i <- array(c(1:numcolonne,1:numcolonne),dim=c(numcolonne,2))
   	dev <- Tc[i]
   	devst <- sqrt(dev/(numdati-1))
