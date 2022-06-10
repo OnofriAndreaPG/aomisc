@@ -5,4 +5,4 @@ modNlin <- nls(Conc ~ A*exp(-k*Time),
                start=list(A=100, k=0.05), 
                data=degradation)
 summary(modNlin)
-plot(modNlin, which = 2)
+plot(modNlin, which = 1)

@@ -36,7 +36,10 @@ export(angularTransform, ma,
        biplot.met, stability.met, summary.met,
        getVarCov.gls, getVarCov.lme, anova.aovList,
        plotnls, boxcox.nls, R2nls, plot.nls,
-       gnlht, compVal, pairComp, deviance.drc)
+       gnlht, compVal, pairComp, deviance.drc,
+       ## meta-analysis
+       getTau, myMeta
+       )
 
 ## S3 methods
 S3method(deviance, drc)
