@@ -1,4 +1,4 @@
-getTau <- function(Y, vi, mods, data, method="HE"){
+getTau <- function(formula, vi, data, method="HE"){
   # This function calculates an estimate for tau2 in meta-analyses
   # Updated on 10/06/2022
   MLfun <- function(X, Y, vi, tau){
@@ -18,24 +18,62 @@ getTau <- function(Y, vi, mods, data, method="HE"){
           0.5*log(sum(1/totVar)))
   }
   
-  X <- model.matrix(mods, data = data)
+  callDetail <- match.call()
+
+  ## Handling the 'formula', 'vi' and 'data' arguments ##########
+  anName <- deparse(substitute(vi))  # storing name for later use
+  if (length(anName) > 1) {anName <- anName[1]}  # to circumvent the behaviour of 'substitute' in do.call("multdrc", ...)
+  if (nchar(anName) < 1) {stop("no standad errors are provided")}  # in case only one curve is analysed
+
+  mf <- match.call(expand.dots = FALSE)
+  nmf <- names(mf)
+  mnmf <- match(c("formula", "vi", "data"), nmf, 0)
+
+  mf[[1]] <- as.name("model.frame")
+
+  mf <- eval(mf[c(1, mnmf)], parent.frame())  #, globalenv())
+  mt <- attr(mf, "terms")
+  varNames <- names(mf)[c(2, 1)]  # Rigido x1 + y
+  varNames0 <- names(mf) # tutte le variabili
+  viVals <- model.extract(mf, "vi")
+
+
+  # only used once, but mf is overwritten later on
+  dose <- model.matrix(mt, mf)[,-c(1)]  # with no intercept
+  xDim <- ncol(as.matrix(dose))
+  Y <- model.response(mf, "numeric")
+  
+  X <- model.matrix(~dose)
   naiveMod <- lm.fit(X, Y)
-  MSE <- sum(naiveMod$residuals^2)/naiveMod$df
-  tau <- MSE - mean(vi)
+  
+  
+  # MSE <- sum(naiveMod$residuals^2)/naiveMod$df
+  # tau <- MSE - mean(vi) Va bene solo per i casi di ANOVA models
+  RSS <- sum(naiveMod$residuals^2)
+  
+  k <- length(Y)
+  p <- ncol(X)
+  H <- X %*% solve(t(X)%*%X) %*% t(X) 
+  P     <- diag(k) -  H # p is the central matrix A
+  V     <- diag(viVals, nrow=k, ncol=k)
+  PV    <- P %*% V # note: this is not symmetric
+  trPV  <- sum(diag(PV)) # since PV needs to be computed anyway, can use 
+  tau  <- (RSS - trPV) / (k-p)
+
   if(method!="HE"){
     if(method=="ML"){
       likfun <- optim(par = tau, lower = 0,
                       fn = MLfun, hessian = T,
                       method = "L-BFGS-B",
-                      Y = Y, vi = vi, X=X)
+                      Y = Y, vi = viVals, X=X)
       tau <- likfun$par
-      print(sqrt(diag(solve(likfun$hessian))))
+      # print(sqrt(diag(solve(likfun$hessian))))
       }
     else { if(method=="REML") {
       likfun <- optim(par = tau, lower = 0,
                       fn = REMLfun,
                       method = "L-BFGS-B",
-                      Y = Y, vi = vi, X=X)
+                      Y = Y, vi = viVals, X = X)
       tau <- likfun$par }
     }}
   tau}
@@ -217,7 +255,7 @@ myMeta <- function(Y, vi, mods, data, method="HE"){
 #   tau}
 
 
-#Funzione per il calcolo solo con MLE###############################
+# Funzione per il calcolo solo con MLE###############################
 
 # #This is the original function in metafor (not very transparent!)
 # getTau <- function(Y, vi, X, method="HE"){

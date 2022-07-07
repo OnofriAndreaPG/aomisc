@@ -7,7 +7,8 @@ Pairwise comparisons between the elements of a vector
 This function provides pairwise comparisons between the element of a vector, as long as a vector of standard errors is provided
 }
 \usage{
-pairComp(parm, SE, nams = NULL, dfr = NULL, adjust = "none", level = 0.05)
+pairComp(parm, SE, nams = NULL, dfr = NULL, adjust = "none", level = 0.05,
+         Letters = c(letters, LETTERS, "."), decreasing = FALSE)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
@@ -18,16 +19,21 @@ A (possibly named) vector of estimates
 A vector of standard errors for the estimates in 'parm'
 }
   \item{nams}{
-A character vector of parameter names (optional). If it is not provided and if 'parm' is not a named vectors, numbers are used.
+A character vector of parameter names (optional). If it is not provided and if 'parm' is not a named vectors, numbers '1:length(parm)' are used.
 }
   \item{dfr}{
 An optional number of residual degrees of freedom (defaults to Inf)
 }
   \item{adjust}{
-A multiplicity adjustment method as in 'multcomp'. Defaults to single-step
+A multiplicity adjustment method as in 'multcomp'. Defaults to "none".
 }
   \item{level}{
 Protection level for compact letter display
+}
+  \item{Letters}{
+Vector of distinct characters (or character strings) used to connect levels that are not significantly different. They should be recogizable when concatenated. The default behaviour is to use the small letters, followed by the capital letters. See help for 'multcompView::multcompLetters()' for futher detail)
+}
+  \item{decreasing}{logical. Should the order of means/letters be decreasing? Defaults to FALSE, which means that the means and letters are in increasing order )
 }
 }
 \value{

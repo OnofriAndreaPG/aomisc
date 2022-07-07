@@ -1,30 +1,35 @@
 pairComp <- function(parm, SE, nams = NULL, dfr = NULL, adjust = "none",
-                     level = 0.05){
+                     level = 0.05, Letters = c(letters, LETTERS, "."),
+                     decreasing = FALSE){
   # Make pairwise comparisons based on a vector of means
   # and a vector of standard errors. Uses the glht() function
   # in the multcomp package
-  # Updated on 18/1/2021
-  chk <- names(parm)
+  # Assumes independence and it is built for the ease of usage
+  # Updated on 16/06/2022
   
-    if(!is.null(nams)){
-      names(parm) <- nams
-    } else {
-      if(is.null(chk)){
-        names(parm) <- as.character(1:length(parm)) 
-      } }
+  if(is.null(nams)){
+       chk <- names(parm)
+       if(!is.null(chk)){
+         nams <- chk
+       } else {
+         nams <- as.character(1:length(parm))
+       }
+  }
+    
+  
+  # Sort the vectors (so that letters are in right order)
+  tmp <- data.frame(parm, SE, nams)
+  if(!decreasing) tmp <- tmp[order(tmp$parm), ] else tmp <- tmp[order(tmp$parm, decreasing = TRUE), ]
+  parm <- tmp$parm; SE <- tmp$SE; nams <- tmp$nams
+  names(parm) <- nams
+  
+  # Prepares the input for multcomp
   df <- ifelse(is.null(dfr), Inf, dfr)
   pairList <- list(coef = parm, vcov = diag(SE^2), df = df)
   class(pairList) = "parm"
   gh <- multcomp::glht(pairList, linfct = tukeyMat(parm))
-  lett <- cld2(gh, level, adjust)
+  lett <- cld2(gh, pval = level, adjust = adjust, Letters = Letters)
   letters <- data.frame(Mean = parm, SE = SE, CLD = lett$Letters)
-  # if(is.null(dfr)){
-  #   letters$'z-value' <- letters$Mean/letters$SE
-  #   letters$prob <- 1 - pt(letters$'z-value', df)
-  # } else {letters$'t-value' <- letters$Mean/letters$SE
-  # letters$prob <- 1 - pt(letters$'t-value', df)
-  # }
-  # 
   returnList = list(pairs = summary(gh, multcomp::adjusted(type = adjust)),
                     Letters = letters)
   return(returnList)
@@ -56,9 +61,10 @@ tukeyMat <- function(obj, lev = NULL) {
     return(M)
 }
 
-cld2 <- function(obj, pval = 0.05, adjust = "none"){
+cld2 <- function(obj, pval = 0.05, adjust = "none", Letters){
   # Serve per ottenere le lettere in modo semplice
   # Passando solo un glht object
+  # Modified from multcomp::cld and it is not exposed
   if(class(obj) != "glht"){
     print("this function is only implemented for glht objects")
     stop()
@@ -67,8 +73,9 @@ cld2 <- function(obj, pval = 0.05, adjust = "none"){
   p.logic <- as.vector(gh$test$pvalues)
   p.logic <- ifelse(p.logic > pval, FALSE, TRUE)
   names(p.logic) <- sub(" - ", "-", as.vector(dimnames(gh$linfct)[[1]]))
-  Letters <- multcompView::multcompLetters(p.logic)
-  return(Letters)
+  LetDisplay <- multcompView::multcompLetters(p.logic, threshold = pval,
+                                           Letters = Letters, reversed = F)
+  return(LetDisplay)
 }
 
 # contrMat <- function(n, type = c("Dunnett", "Tukey", "Sequen", "AVE",
