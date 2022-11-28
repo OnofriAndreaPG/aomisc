@@ -68,15 +68,15 @@ CVA<-function(dataset, groups){
   	# coefst
 
 ## calculation of raw canonical coefficients
-	  # dev2 <- t(dataset.centrata)%*%dataset.centrata
-	  # i <- array(c(1:numcolonne,1:numcolonne),dim=c(numcolonne,2))
-	  # dev2 <- dev2[i]
-	  # devst2 <- sqrt(dev2/(numdati))
-	  # devst2 <- 1/devst2
-	  # identita <- matrix(c(0),numcolonne,numcolonne)
-	  # identita[i]<-devst2
-	  # raw <- identita%*%coefst
-	  # dimnames(raw) <- list(dimnames(dataset)[[2]],canvarnames)
+	  dev2 <- t(dataset.centrata)%*%dataset.centrata
+	  i <- array(c(1:numcolonne,1:numcolonne),dim=c(numcolonne,2))
+	  dev2 <- dev2[i]
+	  devst2 <- sqrt(dev2/(numdati))
+	  devst2 <- 1/devst2
+	  identita <- matrix(c(0),numcolonne,numcolonne)
+	  identita[i]<-devst2
+	  raw <- identita%*%coefst
+	  dimnames(raw) <- list(dimnames(dataset)[[2]],canvarnames)
 
  ## canonical analysis
 	   prop <- A/sum(A)

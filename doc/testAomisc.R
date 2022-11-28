@@ -32,6 +32,44 @@ rm(X, Y, Ye, epsilon, a, c)
 model <- nls(Y ~ NLS.negExp(X, a, c), data = dataset)
 boxcox(model)
 
+# Exponential growth
+rm(list=ls())
+set.seed(1234)
+X <- 1:20
+Ye <- 3 * exp(0.1 * X)
+Y <- Ye + rnorm(20, 0, 0.7)
+dataset <- data.frame(X, Y)
+rm(X, Y)
+devtools::load_all()
+model <- drm(Y ~ X, fct = DRC.expoGrowth(),
+             data = dataset)
+model2 <- nls(Y ~ NLS.expoGrowth(X, a, b),
+             data = dataset)
+summary(model2)
+model$fct$deriv1(3, parms=data.frame(a=coefs[1],b=coefs[2]))
+predict(model, se.fit = T)
+predict(model2, se.fit = T) # Not working
+summary(model)
+summary(model2)
+
+#Make predictions
+funList <- data.frame(form = c("a * exp(b * X)"))
+constList <- data.frame(X = dataset$X)
+gnlht(model2, funList, constList)
+
+# with drc, need to use the basic method
+coefs <- coef(model)
+vc <- vcov(model)
+pnames <- c("a", "b")
+funList <- data.frame(form = c("a * exp(b * X)"))
+constList <- data.frame(X = dataset$X)
+gnlht(coefs, funList, constList, vc, pnames)
+
+# Also the drc method is implemented
+gnlht(model, funList, constList, 
+      parameterNames = pnames)
+
+
 # Exponential decay
 rm(list=ls())
 data("degradation")

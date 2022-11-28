@@ -18,6 +18,8 @@ gnlht(model, func, const, ...)
 gnlht(model, func, const, ...)
 ## S3 method for class 'nlme'
 gnlht(model, func, const, ...)
+## S3 method for class 'drc'
+gnlht(model, func, const, ...)
 }
 \arguments{
 \item{coefs}{a numeric vector}
