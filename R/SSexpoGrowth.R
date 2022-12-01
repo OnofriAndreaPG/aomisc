@@ -110,7 +110,7 @@ NLS.expoGrowth <- selfStart(expoGrowth.fun,
     
     ## Returning the function with self starter and names
     returnList <- list(fct = fct, ssfct = ssfct, 
-                       deriv1 = deriv1,
+                       deriv1 = deriv1, derivx = derivx,
                        names = pnames, text = text, 
                        noParm = sum(is.na(fixed)))
     

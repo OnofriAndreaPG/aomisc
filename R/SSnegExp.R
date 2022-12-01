@@ -97,7 +97,8 @@ negExpDist.Init <- function(mCall, LHS, data, ...) {
     value
 }
 
-NLS.negExpDist <- selfStart(negExpDist.fun, negExpDist.Init, parameters=c("c"))
+NLS.negExpDist <- selfStart(negExpDist.fun, negExpDist.Init, 
+                            parameters=c("c"))
 
 "DRC.negExpDist" <-
     function(fixed = c(NA, NA), names = c("c"))
@@ -140,6 +141,7 @@ NLS.negExpDist <- selfStart(negExpDist.fun, negExpDist.Init, parameters=c("c"))
         pnames <- names[notFixed]
         
         ## Defining derivatives
+        
         
         ## Defining the ED function
         
