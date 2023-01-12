@@ -41,7 +41,7 @@ NLS.powerCurve <- selfStart(powerCurve.fun, powerCurve.Init, parameters=c("a", "
 # NLS.powerCurveNO <- selfStart(powerCurve.fun, powerCurve.Init, parameters=c("a", "b"))
 
 
-"DRC.powerCurve" <- function(fixed = c(NA, NA), names = c("a", "b"))
+DRC.powerCurve <- function(fixed = c(NA, NA), names = c("a", "b"))
 {
   ## Checking arguments
   numParm <- 2
@@ -86,6 +86,40 @@ NLS.powerCurve <- selfStart(powerCurve.fun, powerCurve.Init, parameters=c("a", "
   pnames <- names[notFixed]
   
   ## Defining derivatives
+  deriv1 <- function(x, parms){
+      parmMat <- matrix(parmVec, nrow(parms), 
+                        numParm, byrow = TRUE)
+      parmMat[, notFixed] <- parms
+      
+      # Approximation by using finite differences
+      a <- as.numeric(parmMat[,1])
+      b <- as.numeric(parmMat[,2])
+      
+      d1.1 <- expoDecay.fun(x, a, b)
+      d1.2 <- expoDecay.fun(x, (a + 10e-7), b)
+      d1 <- (d1.2 - d1.1)/10e-7
+      
+      d2.1 <- expoDecay.fun(x, a, b)
+      d2.2 <- expoDecay.fun(x, a, (b + 10e-7) )
+      d2 <- (d2.2 - d2.1)/10e-7
+      
+      cbind(d1, d2)[notFixed]
+    }
+    
+    ## Defining the first derivative (in x=dose)
+    derivx <- function(x, parm)
+    {
+      parmMat <- matrix(parmVec, nrow(parm), numParm, byrow = TRUE)
+      parmMat[, notFixed] <- parm
+      
+      a <- as.numeric(parmMat[,1])
+      b <- as.numeric(parmMat[,2])
+      
+      d1.1 <- expoGrowth.fun(x, a, b)
+      d1.2 <- expoGrowth.fun((x + 10e-7), a, b)
+      d1 <- (d1.2 - d1.1)/10e-7
+      d1
+    }
   
   ## Defining the ED function
   
@@ -95,7 +129,9 @@ NLS.powerCurve <- selfStart(powerCurve.fun, powerCurve.Init, parameters=c("a", "
   text <- "Power curve (Freundlich equation)"
   
   ## Returning the function with self starter and names
-  returnList <- list(fct = fct, ssfct = ssfct, names = pnames, text = text, noParm = sum(is.na(fixed)))
+  returnList <- list(fct = fct, ssfct = ssfct, names = pnames, text = text,
+                     noParm = sum(is.na(fixed)),
+                     deriv1 = deriv1, derivx = derivx)
   
   class(returnList) <- "drcMean"
   invisible(returnList)

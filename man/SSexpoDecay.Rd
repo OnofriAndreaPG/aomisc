@@ -1,7 +1,7 @@
 \name{expoDecay}
 \alias{expoDecay.fun}
 \alias{NLS.expoDecay}
-\alias{NLS.expoDecay}
+\alias{DRC.expoDecay}
 
 \title{Exponential decay function}
 
@@ -31,6 +31,8 @@
 
 \references{
 Ratkowsky, DA (1990) Handbook of nonlinear regression models. New York (USA): Marcel Dekker Inc.
+
+Onofri, A. (2020). A collection of self-starters for nonlinear regression in R. See: \url{https://www.statforbiology.com/2020/stat_nls_usefulfunctions/} 
 }
 
 \author{Andrea Onofri}

@@ -20,7 +20,7 @@ negExp.Init <- function(mCall, LHS, data, ...) {
 
 NLS.negExp <- selfStart(negExp.fun, negExp.Init, parameters=c("a", "c"))
 
-"DRC.negExp" <-
+DRC.negExp <-
 function(fixed = c(NA, NA), names = c("a", "c"))
 {
     ## Checking arguments
@@ -64,6 +64,44 @@ function(fixed = c(NA, NA), names = c("a", "c"))
     pnames <- names[notFixed]
 
     ## Defining derivatives
+    ## Defining derivatives
+    deriv1 <- function(x, parms){
+      
+      parmMat <- matrix(parmVec, nrow(parms), 
+                        numParm, byrow = TRUE)
+      parmMat[, notFixed] <- parms
+      
+      # Approximation by using finite differences
+      a <- as.numeric(parmMat[,1])
+      b <- as.numeric(parmMat[,2])
+      
+      d1.1 <- negExp.fun(x, a, b)
+      d1.2 <- negExp.fun(x, (a + 10e-7), b)
+      d1 <- (d1.2 - d1.1)/10e-7
+      
+      d2.1 <- negExp.fun(x, a, b)
+      d2.2 <- negExp.fun(x, a, (b + 10e-7) )
+      d2 <- (d2.2 - d2.1)/10e-7
+      
+      
+      cbind(d1, d2)[notFixed]
+    }
+    
+    ## Defining the first derivative (in x=dose)
+    derivx <- function(x, parm)
+    {
+      print("qui")
+      parmMat <- matrix(parmVec, nrow(parm), numParm, byrow = TRUE)
+      parmMat[, notFixed] <- parm
+      
+      a <- as.numeric(parmMat[,1])
+      b <- as.numeric(parmMat[,2])
+      
+      d1.1 <- negExp.fun(x, a, b)
+      d1.2 <- negExp.fun((x + 10e-7), a, b)
+      d1 <- (d1.2 - d1.1)/10e-7
+      d1
+    }
 
     ## Defining the ED function
 
@@ -73,13 +111,15 @@ function(fixed = c(NA, NA), names = c("a", "c"))
     text <- "Negative exponential function"
 
     ## Returning the function with self starter and names
-    returnList <- list(fct = fct, ssfct = ssfct, names = pnames, text = text, noParm = sum(is.na(fixed)))
+    returnList <- list(fct = fct, ssfct = ssfct, names = pnames,
+                       text = text, noParm = sum(is.na(fixed)),
+                       deriv1 = deriv1, derivx = derivx)
 
     class(returnList) <- "drcMean"
     invisible(returnList)
 }
 
-#Negative exponential ###########################################################
+# Negative exponential cumulative distribution #############
 negExpDist.fun <- function(predictor, c) {
     x <- predictor
     1 - exp (- c * x)
@@ -100,8 +140,8 @@ negExpDist.Init <- function(mCall, LHS, data, ...) {
 NLS.negExpDist <- selfStart(negExpDist.fun, negExpDist.Init, 
                             parameters=c("c"))
 
-"DRC.negExpDist" <-
-    function(fixed = c(NA, NA), names = c("c"))
+DRC.negExpDist <-
+    function(fixed = NA, names = c("c"))
     {
         ## Checking arguments
         numParm <- 1
@@ -141,7 +181,34 @@ NLS.negExpDist <- selfStart(negExpDist.fun, negExpDist.Init,
         pnames <- names[notFixed]
         
         ## Defining derivatives
+        deriv1 <- function(x, parms){
+          parmMat <- matrix(parmVec, nrow(parms), 
+                            numParm, byrow = TRUE)
+          parmMat[, notFixed] <- parms
+          
+          # Approximation by using finite differences
+          a <- as.numeric(parmMat[,1])
+          
+          d1.1 <- negExpDist.fun(x, a)
+          d1.2 <- negExpDist.fun(x, (a + 10e-7))
+          d1 <- (d1.2 - d1.1)/10e-7
+          d1
+          # cbind(d1)[notFixed]
+        }
         
+        ## Defining the first derivative (in x=dose)
+        derivx <- function(x, parm)
+        {
+          parmMat <- matrix(parmVec, nrow(parm), numParm, byrow = TRUE)
+          parmMat[, notFixed] <- parm
+          
+          a <- as.numeric(parmMat[,1])
+          
+          d1.1 <- negExpDist.fun(x, a)
+          d1.2 <- negExpDist.fun((x + 10e-7), a)
+          d1 <- (d1.2 - d1.1)/10e-7
+          d1
+        }
         
         ## Defining the ED function
         
@@ -151,7 +218,9 @@ NLS.negExpDist <- selfStart(negExpDist.fun, negExpDist.Init,
         text <- "Negative exponential cumulative distribution function"
         
         ## Returning the function with self starter and names
-        returnList <- list(fct = fct, ssfct = ssfct, names = pnames, text = text, noParm = sum(is.na(fixed)))
+        returnList <- list(fct = fct, ssfct = ssfct, names = pnames, 
+                           text = text, noParm = sum(is.na(fixed)),
+                           deriv1 = deriv1, derivx = derivx)
         
         class(returnList) <- "drcMean"
         invisible(returnList)

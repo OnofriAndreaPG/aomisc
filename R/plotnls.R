@@ -1,8 +1,13 @@
 plotnls <- function(fm, type = "means", xlim = NULL, res = 100, 
                     which = 3, ...){
-
+    # fm <- model
     if (!inherits(fm, "nls"))
     stop("use only with \"nls\" objects")
+  
+    if (!inherits(eval(fm$data), "data.frame"))
+    stop("Can only plot models where variable are passed by setting 'data = data.frame'")
+  
+    environment(fm$convInfo)
     
     if(!is.numeric(which) || any(which < 1) || any(which > 3))
     stop("'which' must be in 1:3")

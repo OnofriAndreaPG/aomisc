@@ -14,13 +14,13 @@ R2nls <- function(object){
     dfMod <- summary(object)$df[2]
     sigma <- summary(object)$sigma
   } else if (inherits(object, "drc")){
-    object$origData
+    # object$origData
     varNames <- all.vars(object$call$formula)
     Y <- eval(object$data)[,varNames[1]]
     dfMod <- summary(object)$df
     sigma <- sqrt( summary(object)$resVar )
   }
-  
+  Y <- as.numeric(unlist(Y))
   SSm <- sum( (fitted(object) - mean(Y))^2) # Regression deviance
   SSt <- deviance( lm(Y ~ 1) ) # Total deviance about the mean
   SSr <- deviance(object)  # Residual deviance

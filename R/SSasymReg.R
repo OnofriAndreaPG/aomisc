@@ -65,6 +65,47 @@ DRC.asymReg <- function(fixed = c(NA, NA, NA), names = c("init", "m", "plateau")
     pnames <- names[notFixed]
 
     ## Defining derivatives
+    deriv1 <- function(x, parms){
+      parmMat <- matrix(parmVec, nrow(parms), 
+                        numParm, byrow = TRUE)
+      parmMat[, notFixed] <- parms
+      
+      # Approximation by using finite differences
+      a <- as.numeric(parmMat[,1])
+      b <- as.numeric(parmMat[,2])
+      c <- as.numeric(parmMat[,3])
+      
+      d1.1 <- asymReg.fun(x, a, b, c)
+      d1.2 <- asymReg.fun(x, (a + 10e-7), b, c)
+      d1 <- (d1.2 - d1.1)/10e-7
+      
+      d2.1 <- asymReg.fun(x, a, b, c)
+      d2.2 <- asymReg.fun(x, a, (b + 10e-7), c )
+      d2 <- (d2.2 - d2.1)/10e-7
+      
+      d3.1 <- asymReg.fun(x, a, b, c)
+      d3.2 <- asymReg.fun(x, a, b, (c + 10e-7) )
+      d3 <- (d3.2 - d3.1)/10e-7
+      
+      cbind(d1, d2, d3)[notFixed]
+    }
+    
+    ## Defining the first derivative (in x=dose)
+    ##  based on deriv(~c+(d-c)*(exp(-exp(b*(log(x)-log(e))))), "x", function(x, b,c,d,e){})
+    derivx <- function(x, parm)
+    {
+      parmMat <- matrix(parmVec, nrow(parm), numParm, byrow = TRUE)
+      parmMat[, notFixed] <- parm
+      
+      a <- as.numeric(parmMat[,1])
+      b <- as.numeric(parmMat[,2])
+      c <- as.numeric(parmMat[,3])
+      
+      d1.1 <- asymReg.fun(x, a, b, c)
+      d1.2 <- asymReg.fun((x + 10e-7), a, b, c)
+      d1 <- (d1.2 - d1.1)/10e-7
+      d1
+    }
 
     ## Defining the ED function
 
@@ -74,13 +115,16 @@ DRC.asymReg <- function(fixed = c(NA, NA, NA), names = c("init", "m", "plateau")
     text <- "Asymptotic Regression Model"
 
     ## Returning the function with self starter and names
-    returnList <- list(fct = fct, ssfct = ssfct, names = pnames, text = text, noParm = sum(is.na(fixed)))
+    returnList <- list(fct = fct, ssfct = ssfct, names = pnames, 
+                       text = text, noParm = sum(is.na(fixed)),
+                       deriv1 = deriv1, derivx = derivx)
 
     class(returnList) <- "drcMean"
     invisible(returnList)
 }
 
-"DRC.SSasymp" <- function(fixed = c(NA, NA, NA), names = c("Asym", "R0", "lrc")) {
+DRC.SSasymp <- function(fixed = c(NA, NA, NA), 
+                          names = c("Asym", "R0", "lrc")) {
     ## Checking arguments
     numParm <- 3
     
@@ -95,6 +139,7 @@ DRC.asymReg <- function(fixed = c(NA, NA, NA), names = c("init", "m", "plateau")
     ## Defining the non-linear function
     fct <- function(x, parm)
     {
+        # same model as above, but lrc = log(m)
         parmMat <- matrix(parmVec, nrow(parm), numParm, byrow = TRUE)
         parmMat[, notFixed] <- parm
 
@@ -125,6 +170,54 @@ DRC.asymReg <- function(fixed = c(NA, NA, NA), names = c("init", "m", "plateau")
     pnames <- names[notFixed]
 
     ## Defining derivatives
+    deriv1 <- function(x, parms){
+      parmMat <- matrix(parmVec, nrow(parms), 
+                        numParm, byrow = TRUE)
+      parmMat[, notFixed] <- parms
+      
+      meanfun <- function(x, a, b, c) {
+        a + (b - a) * exp (- exp(c) * x)
+        }
+
+      # Approximation by using finite differences
+      a <- as.numeric(parmMat[,1])
+      b <- as.numeric(parmMat[,2])
+      c <- as.numeric(parmMat[,3])
+      
+      d1.1 <- meanfun(x, a, b, c)
+      d1.2 <- meanfun(x, (a + 10e-7), b, c)
+      d1 <- (d1.2 - d1.1)/10e-7
+      
+      d2.1 <- meanfun(x, a, b, c)
+      d2.2 <- meanfun(x, a, (b + 10e-7), c )
+      d2 <- (d2.2 - d2.1)/10e-7
+      
+      d3.1 <- meanfun(x, a, b, c)
+      d3.2 <- meanfun(x, a, b, (c + 10e-7) )
+      d3 <- (d3.2 - d3.1)/10e-7
+      
+      cbind(d1, d2, d3)[notFixed]
+    }
+    
+    ## Defining the first derivative (in x=dose)
+    derivx <- function(x, parm)
+    {
+      parmMat <- matrix(parmVec, nrow(parm), numParm, byrow = TRUE)
+      parmMat[, notFixed] <- parm
+      
+      meanfun <- function(x, a, b, c) {
+        a + (b - a) * exp (- exp(c) * x)
+        }
+      
+      a <- as.numeric(parmMat[,1])
+      b <- as.numeric(parmMat[,2])
+      c <- as.numeric(parmMat[,3])
+      
+      d1.1 <- meanfun(x, a, b, c)
+      d1.2 <- meanfun((x + 10e-7), a, b, c)
+      d1 <- (d1.2 - d1.1)/10e-7
+      d1
+    }
 
     ## Defining the ED function
 
@@ -134,7 +227,9 @@ DRC.asymReg <- function(fixed = c(NA, NA, NA), names = c("init", "m", "plateau")
     text <- "Asymptotic regression model"
 
     ## Returning the function with self starter and names
-    returnList <- list(fct = fct, ssfct = ssfct, names = pnames, text = text, noParm = sum(is.na(fixed)))
+    returnList <- list(fct = fct, ssfct = ssfct, names = pnames,
+                       text = text, noParm = sum(is.na(fixed)),
+                       deriv1 = deriv1, derivx = derivx)
 
     class(returnList) <- "drcMean"
     invisible(returnList)
