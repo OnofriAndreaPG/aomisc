@@ -8,4 +8,5 @@ Depends: R (>= 4.0.2), drc, plyr, car, multcompView
 Description: This package contains several service functions to be used to analyse datasets obtained from field experiments or other types of assays in agriculture
 URL: https://www.statforbiology.com
 License: GPL (>= 2)
-
+RoxygenNote: 7.2.0
+Encoding: UTF-8

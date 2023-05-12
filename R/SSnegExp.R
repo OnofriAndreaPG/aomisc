@@ -64,7 +64,6 @@ function(fixed = c(NA, NA), names = c("a", "c"))
     pnames <- names[notFixed]
 
     ## Defining derivatives
-    ## Defining derivatives
     deriv1 <- function(x, parms){
       
       parmMat <- matrix(parmVec, nrow(parms), 
