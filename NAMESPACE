@@ -3,6 +3,7 @@ importFrom(utils, tail)
 importFrom(car, deltaMethod)
 importFrom(plyr, ldply, ddply)
 importFrom(multcompView, multcompLetters3)
+import(MASS)
 import(stats)
 export(angularTransform, ma, 
        linear.fun, NLS.linear, DRC.linear,
