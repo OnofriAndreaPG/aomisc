@@ -1,7 +1,7 @@
 \name{gnlht}
 \alias{gnlht}
 \title{
-Test nonlinear functions of model parameters
+Linear/nonlinear functions of model parameters
 }
 \description{
 This function calculates linear/nonlinear functions of model parameters and returns an estimate with standard errors.

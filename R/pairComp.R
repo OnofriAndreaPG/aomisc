@@ -1,11 +1,11 @@
-pairComp <- function(parm, SE, nams = NULL, dfr = NULL, adjust = "none",
+pairComp <- function(parm, vcovMat, nams = NULL, dfr = NULL, adjust = "none",
                      level = 0.05, Letters = c(letters, LETTERS, "."),
-                     decreasing = FALSE){
+                     reversed = FALSE){
   # Make pairwise comparisons based on a vector of means
-  # and a vector of standard errors. Uses the glht() function
+  # and a variance-covariance matrix. Uses the glht() function
   # in the multcomp package
   # Assumes independence and it is built for the ease of usage
-  # Updated on 16/06/2022
+  # Updated on 18/05/2023
   
   if(is.null(nams)){
        chk <- names(parm)
@@ -15,17 +15,18 @@ pairComp <- function(parm, SE, nams = NULL, dfr = NULL, adjust = "none",
          nams <- as.character(1:length(parm))
        }
   }
-    
   
-  # Sort the vectors (so that letters are in right order)
+  # Sort the vectors/matrices (so that letters are in common order)
+  SE <- sqrt(diag(vcovMat))
   tmp <- data.frame(parm, SE, nams)
-  if(!decreasing) tmp <- tmp[order(tmp$parm), ] else tmp <- tmp[order(tmp$parm, decreasing = TRUE), ]
+  if(!reversed) tmp <- tmp[order(tmp$parm), ] else tmp <- tmp[order(tmp$parm, decreasing = TRUE), ]
+  if(!reversed) vcovMat <- vcovMat[order(parm), order(parm)] else vcovMat <- vcovMat[order(parm, decreasing = TRUE), order(parm, decreasing = TRUE) ]
   parm <- tmp$parm; SE <- tmp$SE; nams <- tmp$nams
   names(parm) <- nams
   
   # Prepares the input for multcomp
   df <- ifelse(is.null(dfr), Inf, dfr)
-  pairList <- list(coef = parm, vcov = diag(SE^2), df = df)
+  pairList <- list(coef = parm, vcov = vcovMat, df = df)
   class(pairList) = "parm"
   gh <- multcomp::glht(pairList, linfct = tukeyMat(parm))
   lett <- cld2(gh, pval = level, adjust = adjust, Letters = Letters)
@@ -74,7 +75,7 @@ cld2 <- function(obj, pval = 0.05, adjust = "none", Letters){
   p.logic <- ifelse(p.logic > pval, FALSE, TRUE)
   names(p.logic) <- sub(" - ", "-", as.vector(dimnames(gh$linfct)[[1]]))
   LetDisplay <- multcompView::multcompLetters(p.logic, threshold = pval,
-                                           Letters = Letters, reversed = F)
+                                           Letters = Letters)
   return(LetDisplay)
 }
 

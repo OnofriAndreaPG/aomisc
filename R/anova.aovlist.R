@@ -1,5 +1,5 @@
 # This function extends the anova method to the objects
 # fitted with 'aov()'
-anova.aovList <- function(object){
+anova.aovlist <- function(object){
   summary(object)
 }

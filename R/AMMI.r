@@ -11,70 +11,6 @@
 ## PC is the number of PC to be considered (default is 2)
 ## AMMI: works on balanced raw data
 ## AMMImeans: works on means
-  
-AMMImeans <- function(yield, genotype, environment, PC = 2,
-                      MSE = NULL, dfr = NULL) {
-
-  variety <- genotype; envir <- environment
-  add.anova <- aov(yield ~ envir * variety)
-  int.eff <- model.tables(add.anova, type = "effects", cterms = "envir:variety")$tables$"envir:variety"
-  int.mean <- model.tables(add.anova, type = "means", cterms = "envir:variety")$tables$"envir:variety"
-  envir.mean <- model.tables(add.anova, type = "means", cterms = "envir")$tables$"envir"
-  var.mean <- model.tables(add.anova, type = "means", cterms = "variety")$tables$"variety"
-  overall.mean <- model.tables(add.anova, type = "means")$tables[[1]]
-  
-## 3 - SVD
-  dec <- svd(int.eff, nu = PC, nv = PC)
-  if (PC > 1){ 
-    D <- diag(dec$d[1:PC]) 
-  } else {
-    D <- matrix(dec$d[1:PC],1,1)
-  }
-  E <- dec$u %*% sqrt(D)
-  G <- dec$v %*% sqrt(D)
-  Ecolnumb <- c(1:PC)
-  Ecolnames <- paste("PC", Ecolnumb, sep = "")
-  dimnames(E) <- list(levels(envir), Ecolnames)
-  dimnames(G) <- list(levels(variety), Ecolnames)
-  #stability <- sqrt(G[,1]^2+G[,2]^2)
-
-## 4 - Significance of PCs
-  svalues<-dec$d
-  PC.n<-c(1:length(svalues))
-  PC.SS<-svalues^2
-  percSS<-PC.SS/sum(PC.SS)*100
-  GGE.table<-data.frame("PC"=PC.n,"Singular_value"=svalues,"PC_SS"=PC.SS, "Perc_of_Total_SS"=percSS,
-                        cum_perc = cumsum(percSS))
-  GGE.SS <- (t(as.vector(int.eff))%*%as.vector(int.eff))
-    
-  
-  if(!is.null(MSE) & !is.null(dfr)){
-    ngen <- length(int.mean[1,])
-    nenv <- length(int.mean[,1])
-    df_n <- ngen + nenv - 1 - 2 * GGE.table[,1]
-    ss <- GGE.table$PC_SS
-    ms <- ss/df_n
-    f <- ms/MSE
-    pf <- pf(f, df_n, dfr, lower.tail = F)
-    aov.tab <- data.frame(PC = GGE.table[,1], SS = ss, DF = df_n, MS = ms,
-                          "F" = f, "P value" = pf)
-  } else {
-    aov.tab <- NA
-  }
-    
-## 6 - Other results  
-  result <- list(means_table = int.mean,
-       interaction_effect=int.eff, "AMMI_SS"=GGE.SS, 
-       summary = GGE.table, anova = aov.tab,
-       environment_scores = E, genotype_scores = G,
-       "genotype_means"=var.mean, "environment_means"=envir.mean)#,Stability = stability)
-  # cat(paste("Result of AMMI Analysis", "\n", "\n"))
-  # class(result) <- "AMMIobject"
-  # print(E)
-  # cat(paste("\n","Genotype Scores", "\n"))
-  # print(G)
-  return(invisible(result))
-}
 
 AMMI <- function(yield, genotype, environment, block, PC = 2) {
 
@@ -142,6 +78,70 @@ AMMI <- function(yield, genotype, environment, block, PC = 2) {
 # cat(paste("\n","Genotype Scores", "\n"))
 # print(G)
 return(invisible(result))
+}
+
+AMMImeans <- function(yield, genotype, environment, PC = 2,
+                      MSE = NULL, dfr = NULL) {
+
+  variety <- genotype; envir <- environment
+  add.anova <- aov(yield ~ envir * variety)
+  int.eff <- model.tables(add.anova, type = "effects", cterms = "envir:variety")$tables$"envir:variety"
+  int.mean <- model.tables(add.anova, type = "means", cterms = "envir:variety")$tables$"envir:variety"
+  envir.mean <- model.tables(add.anova, type = "means", cterms = "envir")$tables$"envir"
+  var.mean <- model.tables(add.anova, type = "means", cterms = "variety")$tables$"variety"
+  overall.mean <- model.tables(add.anova, type = "means")$tables[[1]]
+  
+## 3 - SVD
+  dec <- svd(int.eff, nu = PC, nv = PC)
+  if (PC > 1){ 
+    D <- diag(dec$d[1:PC]) 
+  } else {
+    D <- matrix(dec$d[1:PC],1,1)
+  }
+  E <- dec$u %*% sqrt(D)
+  G <- dec$v %*% sqrt(D)
+  Ecolnumb <- c(1:PC)
+  Ecolnames <- paste("PC", Ecolnumb, sep = "")
+  dimnames(E) <- list(levels(envir), Ecolnames)
+  dimnames(G) <- list(levels(variety), Ecolnames)
+  #stability <- sqrt(G[,1]^2+G[,2]^2)
+
+## 4 - Significance of PCs
+  svalues<-dec$d
+  PC.n<-c(1:length(svalues))
+  PC.SS<-svalues^2
+  percSS<-PC.SS/sum(PC.SS)*100
+  GGE.table<-data.frame("PC"=PC.n,"Singular_value"=svalues,"PC_SS"=PC.SS, "Perc_of_Total_SS"=percSS,
+                        cum_perc = cumsum(percSS))
+  GGE.SS <- (t(as.vector(int.eff))%*%as.vector(int.eff))
+    
+  
+  if(!is.null(MSE) & !is.null(dfr)){
+    ngen <- length(int.mean[1,])
+    nenv <- length(int.mean[,1])
+    df_n <- ngen + nenv - 1 - 2 * GGE.table[,1]
+    ss <- GGE.table$PC_SS
+    ms <- ss/df_n
+    f <- ms/MSE
+    pf <- pf(f, df_n, dfr, lower.tail = F)
+    aov.tab <- data.frame(PC = GGE.table[,1], SS = ss, DF = df_n, MS = ms,
+                          "F" = f, "P value" = pf)
+  } else {
+    aov.tab <- NA
+  }
+    
+## 6 - Other results  
+  result <- list(means_table = int.mean,
+       interaction_effect=int.eff, "AMMI_SS"=GGE.SS, 
+       summary = GGE.table, anova = aov.tab,
+       environment_scores = E, genotype_scores = G,
+       "genotype_means"=var.mean, "environment_means"=envir.mean)#,Stability = stability)
+  # cat(paste("Result of AMMI Analysis", "\n", "\n"))
+  # class(result) <- "AMMIobject"
+  # print(E)
+  # cat(paste("\n","Genotype Scores", "\n"))
+  # print(G)
+  return(invisible(result))
 }
 
 AMMI_old <- function(variety, envir, block, yield, PC=2, biplot=1) {

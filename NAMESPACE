@@ -3,14 +3,14 @@ importFrom(utils, tail)
 importFrom(car, deltaMethod)
 importFrom(plyr, ldply, ddply)
 importFrom(multcompView, multcompLetters3)
-import(stats)
-export(angularTransform, ma, 
-       linear.fun, NLS.linear, DRC.linear,
-       linearOrigin.fun, NLS.linearOrigin, DRC.linearOrigin,
+import(stats, emmeans)
+export(angularTransform, ma,
+       # Support for nls and drc
+       linear.fun, NLS.linear, DRC.linear, NLS.linearOrigin,
        poly2.fun, NLS.poly2, DRC.poly2,
        expoGrowth.fun, NLS.expoGrowth, DRC.expoGrowth,
        expoDecay.fun, NLS.expoDecay, DRC.expoDecay,
-       EXD.fun,
+       EXD.fun, # To be re-worked
        asymReg.fun, NLS.asymReg, DRC.asymReg, DRC.SSasymp,
        negExp.fun, NLS.negExp, DRC.negExp,
        YL.fun, NLS.YL, DRC.YL,
@@ -32,11 +32,15 @@ export(angularTransform, ma,
        lorentz.4.fun, NLS.lorentz.4, DRC.lorentz.4,
        triangle.fun,
        JointRegr, JointRegrM,
+       # utilities for ANOVA models
+       anova.aovlist,
        AMMI, AMMImeans, GGE, GGEmeans, CVA,
        biplot.met, stability.met, summary.met,
-       getVarCov.gls, getVarCov.lme, anova.aovList,
-       plot.nls, boxcox.nls, R2nls,
-       gnlht, compVal, pairComp, deviance.drc,
+       getVarCov.gls, getVarCov.lme,
+       # Utilities for nonlinear regression
+       boxcox.nls, R2nls, plot.nls,
+       summary.nlsbc,
+       gnlht, compCoefs, pairComp, deviance.drc,
        ## meta-analysis
        getTau, myMeta
        )
@@ -44,7 +48,8 @@ export(angularTransform, ma,
 ## S3 methods
 S3method(deviance, drc)
 S3method(boxcox, nls)
-S3method(anova, aovList)
+S3method(summary, nlsbc)
+S3method(anova, aovlist)
 S3method(gnlht, lm)
 S3method(gnlht, nls)
 S3method(gnlht, lme)

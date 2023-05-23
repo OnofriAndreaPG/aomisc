@@ -1,4 +1,4 @@
-"boxcox.nls" <- function(object, lambda = seq(-2, 2, 1/10), plotit = FALSE, start,
+"boxcox.nlsOLD" <- function(object, lambda = seq(-2, 2, 1/10), plotit = TRUE, start,
 eps = 1/50, bcAdd = 0, level = 0.95, xlab = expression(lambda), ylab = "log-likelihood", ...)
 {
     ## Defining the Box-Cox modified power transformations
@@ -54,15 +54,17 @@ eps = 1/50, bcAdd = 0, level = 0.95, xlab = expression(lambda), ylab = "log-like
     ## Defining the log-likelihood function
     llFct <- function(object, lv)
     {
-        sumObj <- summary(object)
-        N <- sum(sumObj$df)
+        # sumObj <- summary(object)
+        N <- length(residuals(object)) # sum(sumObj$df)
         Ji <- (eval(object$data)[, as.character(formula(object)[[2]])[2]])^(lv-1)
-        
         -N*log(sqrt(sum(residuals(object)^2)/N))-N/2+sum(log(Ji))
     }
     
     lenlam <- length(lambda)
     llVec <- rep(NA, lenlam)
+    rss <- rep(NA, lenlam)
+    k <- rep(NA, lenlam)
+    # coefs <- data.frame(uno, due)
     for (i in 1:lenlam)
     {
 #        lv <- lambda[i]
@@ -70,10 +72,15 @@ eps = 1/50, bcAdd = 0, level = 0.95, xlab = expression(lambda), ylab = "log-like
         assign("bcFct1", bfFct(lambda[i]), envir = .GlobalEnv)     
         assign("bcFct2", bfFct2(lambda[i]), envir = .GlobalEnv)     
         newFormula <- bcFct1(.) ~ bcFct2(.)        
-
+        
         nlsTemp <- try(update(object, formula. = newFormula, start = startVec, trace = FALSE), silent = TRUE)
 #        if (!inherits(nlsTemp, "try-error")) {llVec[i] <- logLik(nlsTemp)}
-        if (!inherits(nlsTemp, "try-error")) {llVec[i] <- llFct(nlsTemp, lambda[i])}
+        if (!inherits(nlsTemp, "try-error")) {
+          llVec[i] <- llFct(nlsTemp, lambda[i])
+          rss[i] <- deviance(nlsTemp)
+          k[i] <- coef(nlsTemp)[2]
+        }
+        # print(coef(nlsTemp))
     }
 
     lv <- lambda[which.max(llVec)]
@@ -104,54 +111,54 @@ eps = 1/50, bcAdd = 0, level = 0.95, xlab = expression(lambda), ylab = "log-like
     retFit <- update(object, formula. = newFormula, start = startVec, trace = FALSE)  
     # last time 'bcFct1' and 'bcFct2' are used
 #    rm(bcFct1, bcFct2, envir = .GlobalEnv)  # to ensure that the predict method can find bcFct2()
-    retFit$lambda <- list(lambda = lv, ci = ci)
+    retFit$lambda <- list(lambda = lv, ci = ci, llVec = llVec, rss = rss, k = k)
     invisible(retFit)
 }
 
 
-"boxcoxCI" <- 
-function(x, y, level = 0.95)
-{
-    ## R lines taken from boxcox.default in the package MASS and then slightly modified
-    xl <- x
-    loglik <- y
-    
-    llnotna <- !is.na(loglik)
-    xl <- xl[llnotna]
-    loglik <- loglik[llnotna]
-    
-    m <- length(loglik)
-
-    mx <- (1:m)[loglik == max(loglik)][1]
-    Lmax <- loglik[mx]
-    lim <- Lmax - qchisq(level, 1)/2
-
-    ind <- range((1:m)[loglik > lim])
-
-    xx <- rep(NA, 2)
-    if(loglik[1] < lim) 
-    {
-        i <- ind[1]
-        xx[1] <- xl[i - 1] + ((lim - loglik[i - 1]) *
-                          (xl[i] - xl[i - 1]))/(loglik[i] - loglik[i - 1])
-
-    }
-    if(loglik[m] < lim) 
-    {
-        i <- ind[2] + 1
-        xx[2] <- xl[i - 1] + ((lim - loglik[i - 1]) *
-                          (xl[i] - xl[i - 1]))/(loglik[i] - loglik[i - 1])
-    }
-    return(xx)
-}
-
-"bcSummary" <- function(object)
-{
-    cat("\n")
-    cat("Estimated lambda:", object$lambda$lambda, "\n")
- 
-    bcci <- format(object$lambda$ci, digits = 2)
-    ciStr <- paste("[", bcci[1], ",", bcci[2], "]", sep="")
-    cat("Confidence interval for lambda:", ciStr, "\n\n")    
-}
+# "boxcoxCI" <- 
+# function(x, y, level = 0.95)
+# {
+#     ## R lines taken from boxcox.default in the package MASS and then slightly modified
+#     xl <- x
+#     loglik <- y
+#     
+#     llnotna <- !is.na(loglik)
+#     xl <- xl[llnotna]
+#     loglik <- loglik[llnotna]
+#     
+#     m <- length(loglik)
+# 
+#     mx <- (1:m)[loglik == max(loglik)][1]
+#     Lmax <- loglik[mx]
+#     lim <- Lmax - qchisq(level, 1)/2
+# 
+#     ind <- range((1:m)[loglik > lim])
+# 
+#     xx <- rep(NA, 2)
+#     if(loglik[1] < lim) 
+#     {
+#         i <- ind[1]
+#         xx[1] <- xl[i - 1] + ((lim - loglik[i - 1]) *
+#                           (xl[i] - xl[i - 1]))/(loglik[i] - loglik[i - 1])
+# 
+#     }
+#     if(loglik[m] < lim) 
+#     {
+#         i <- ind[2] + 1
+#         xx[2] <- xl[i - 1] + ((lim - loglik[i - 1]) *
+#                           (xl[i] - xl[i - 1]))/(loglik[i] - loglik[i - 1])
+#     }
+#     return(xx)
+# }
+# 
+# "bcSummary" <- function(object)
+# {
+#     cat("\n")
+#     cat("Estimated lambda:", object$lambda$lambda, "\n")
+#  
+#     bcci <- format(object$lambda$ci, digits = 2)
+#     ciStr <- paste("[", bcci[1], ",", bcci[2], "]", sep="")
+#     cat("Confidence interval for lambda:", ciStr, "\n\n")    
+# }
 

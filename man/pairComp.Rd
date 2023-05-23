@@ -4,19 +4,19 @@
 Pairwise comparisons between the elements of a vector
 }
 \description{
-This function provides pairwise comparisons between the element of a vector, as long as a vector of standard errors is provided
+This function provides pairwise comparisons between the element of a vector, as long as a variance-covariance matrix is also provided
 }
 \usage{
-pairComp(parm, SE, nams = NULL, dfr = NULL, adjust = "none", level = 0.05,
-         Letters = c(letters, LETTERS, "."), decreasing = FALSE)
+pairComp(parm, vcovMat, nams = NULL, dfr = NULL, adjust = "none",
+         level = 0.05, Letters = c(letters, LETTERS, "."), 
+         reversed = FALSE)
 }
-%- maybe also 'usage' for other objects documented here.
 \arguments{
   \item{parm}{
 A (possibly named) vector of estimates
 }
-  \item{SE}{
-A vector of standard errors for the estimates in 'parm'
+  \item{vcovMat}{
+Variance-covariance matrix for the estimates
 }
   \item{nams}{
 A character vector of parameter names (optional). If it is not provided and if 'parm' is not a named vectors, numbers '1:length(parm)' are used.
@@ -33,13 +33,13 @@ Protection level for compact letter display
   \item{Letters}{
 Vector of distinct characters (or character strings) used to connect levels that are not significantly different. They should be recogizable when concatenated. The default behaviour is to use the small letters, followed by the capital letters. See help for 'multcompView::multcompLetters()' for futher detail)
 }
-  \item{decreasing}{logical. Should the order of means/letters be decreasing? Defaults to FALSE, which means that the means and letters are in increasing order )
+  \item{reversed}{logical. Should the order of means/letters be decreasing? Defaults to FALSE, which means that the means and letters are in increasing order)
 }
 }
 \value{
 Returns a list with the following elements
 \item{pairs}{A dataframe of pairwise comparisons}
-\item{Letters}{a dataframe with compact letter display}
+\item{Letters}{A dataframe with compact letter display}
 }
 \references{
 Onofri A. (2020) The broken bridge between biologists and statisticians: a blog and R package, Statforbiology, IT, web: https://www.statforbiology.com
@@ -60,13 +60,11 @@ modNlin <- nls(Conc ~ A[Herbicide] * exp(-k[Herbicide] * Time),
                data=metamitron)
 summary(modNlin)
 
-# Retreive infos
-tab <- summary(modNlin)
-dRates <- tab$coef[5:8,1]
-SEs <- tab$coef[5:8,2]
-dfr = tab$df[2]
-
-cp <- pairComp(dRates, SEs, dfr = dfr, adjust = "holm")
-cp$pairs
+# Retreive infos and make comparisons
+coefs <- coef(modNlin)[5:8] 
+vcovMat <- vcov(modNlin)[5:8, 5:8]
+cp <- pairComp(coefs, vcovMat, dfr = tab$df[2], 
+               adjust = "none", reversed = F)
 cp$Letters
+cp$pairs
 }
