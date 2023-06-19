@@ -33,16 +33,19 @@ export(angularTransform, ma,
        triangle.fun,
        JointRegr, JointRegrM,
        # utilities for ANOVA models
-       anova.aovlist,
-       AMMI, AMMImeans, GGE, GGEmeans, CVA,
-       biplot.met, stability.met, summary.met,
-       getVarCov.gls, getVarCov.lme,
+       anova.aovlist, getVarCov.gls, getVarCov.lme,
+       # utilities for METs
+       AMMI, GGE, CVA, biplot.AMMIobject, biplot.GGEobject, 
+       biplot.polygon,
+       stability.met, summary.met,
        # Utilities for nonlinear regression
        boxcox.nls, R2nls, plot.nls,
        summary.nlsbc,
        gnlht, compCoefs, pairComp, deviance.drc,
        ## meta-analysis
-       getTau, myMeta
+       getTau, myMet
+       ## Other
+       tukeyMat
        )
 
 ## S3 methods
@@ -57,5 +60,7 @@ S3method(gnlht, nlme)
 S3method(gnlht, drc)
 S3method(gnlht, numeric)
 S3method(plot, nls)
+S3method(biplot, AMMIobject)
+S3method(biplot, GGEobject)
 
 

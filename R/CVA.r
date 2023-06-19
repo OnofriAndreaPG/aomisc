@@ -1,4 +1,4 @@
-CVA<-function(dataset, groups){
+CVA <- function(dataset, groups){
 ## Performs linear discriminant analysis (date: 15/11/19)
 ## dataset is a multidimensional data.frame of observations
 ## groups is a vector coding for groupings

@@ -1,7 +1,8 @@
-## GENOTYPE PLUS GENOTYPE X INTERACTION, AS APPLIED TO AGRICULTURE VARIETY TRIALS
+## GENOTYPE PLUS GENOTYPE X ENVIRONMENT INTERACTION, 
+## AS APPLIED TO AGRICULTURE VARIETY TRIALS
 ## REFERENCE: Yan et al., 2000. Cultivar evaluation and mega-environment investigation
 ## based on the GGE biplot
-## Update: 30/10/2007
+## Update: 26/05/2023
 
 ## INPUTS:
 ## variety is a vector of variety codes (factor)
@@ -13,86 +14,79 @@
 ## GGEmeans: works on means
 ## scale is the partitioning of singular values
 
-GGEmeans <- function(yield, genotype, envir, PC=2, scale=0.5){
+GGE <- function(yield, genotype, environment, block = NULL,
+                 PC = 2) {
+  MSE <- NULL
+  dfr <- NULL
+
+## 1 - Model fitting and descriptive statistics
   
-  variety <- genotype
-  ge.anova <- aov(yield ~ envir + envir:variety)
-  ge.anova2 <- aov(yield ~ envir + variety + envir:variety)
-  ge.eff<-model.tables(ge.anova,type="effects",cterms="envir:variety")$tables$"envir:variety"
-  means.yield<-model.tables(ge.anova, type="means", cterms="envir:variety")$tables$"envir:variety"
-  means.env <- model.tables(ge.anova2, type="means", cterms="envir")$tables$"envir"
-  means.gen <- model.tables(ge.anova2, type="means", cterms="variety")$tables$"variety"  
+  envir <- as.factor(environment)
+  variety <- as.factor(genotype)
   
-  ## 3 - SVD
-  ge.eff <- t(ge.eff)
-  dec <- svd(ge.eff, nu = PC, nv = PC)
-    if (PC > 1){ 
-    D <- diag(dec$d[1:PC]^scale)
-    Dbis <- diag(dec$d[1:PC]^(1-scale)) 
-  } else {
-    D <- dec$d[1:PC]^scale
-    Dbis <- dec$d[1:PC]^(1-scale)
+  # Verify whether it is balanced and replicated
+  conTab <- table(envir, variety)
+  if(any(conTab == 0)) stop("Missing cells were found. Imputing values is necessary")
+  balanced <- ifelse(length(unique(conTab)) == 1, TRUE, FALSE)
+  unreplicated <- FALSE
+  if(balanced) unreplicated <- ifelse(unique(conTab) == 1, TRUE, FALSE)
+  numReps <- as.numeric(unique(conTab))
+  if(!is.null(MSE) & !is.null(dfr)) externalError <- TRUE else externalError <- FALSE
+  
+  # Estimate the MSE if not passed in (not sure it is useful) ...
+  add.anova <- NULL
+  
+  if(!is.null(block) & is.null(MSE) & !unreplicated) {
+    # With blocks, it includes the block %in% environments in the model
+    add.anova <- lm(yield ~ variety*envir + block %in% envir)
+    suppressMessages( tab <- as.data.frame(emmeans::emmeans(add.anova, ~variety:envir)) )
+    MSE <- summary(add.anova)$sigma^2
+    MSE <- MSE/numReps
+    df.res <- add.anova$df.residual
+  } else if(is.null(block) & is.null(MSE) & !unreplicated) {
+    # It does not include the blocks
+    add.anova <- lm(yield ~ variety*envir)
+    suppressMessages( tab <- as.data.frame(emmeans::emmeans(add.anova, ~variety:envir)) )
+    # tab <- data.frame(variety, envir, emmean = yield)
+    MSE <- summary(add.anova)$sigma^2
+    MSE <- MSE/numReps
+    df.res <- add.anova$df.residual
+  } else if(is.null(MSE) & unreplicated) {
+    add.anova <- lm(yield ~ variety*envir)
+    suppressWarnings(suppressMessages( tab <- as.data.frame(emmeans::emmeans(add.anova, ~variety:envir)) ))
+    MSE <- 0
+    df.res <- 0
     
+  } else {
+    add.anova <- lm(yield ~ variety*envir)
+    suppressWarnings(suppressMessages( tab <- as.data.frame(emmeans::emmeans(add.anova, ~variety:envir)) ))
+    df.res <- add.anova$df.residual
   }
   
-  G<-dec$u%*%D
-  E<-dec$v%*%Dbis
+  if(is.null(dfr)) dfr <- df.res
   
-  Ecolnumb<-c(1:PC)
-  Ecolnames<-paste("PC",Ecolnumb,sep="")
-   dimnames(E)<-list(levels(envir),Ecolnames)
-   dimnames(G)<-list(levels(variety),Ecolnames)
- 
-  ## 4 - Singular values and significance of PCs  
-  svalues<-dec$d
-  PC.n<-c(1:length(svalues))
-  PC.SS<-svalues^2
-  percSS<-PC.SS/sum(PC.SS)*100
-  GGE.table<-data.frame("PC"=PC.n,"Singular_value"=svalues,"PC_SS"=PC.SS, "Perc_of_Total_SS"=percSS)
-  #numblock<-length(levels(block))
-  #GGE.SS<-(t(as.vector(ge.eff))%*%as.vector(ge.eff))*numblock
-  GGE.SS<-(t(as.vector(ge.eff))%*%as.vector(ge.eff))
+  # Calculate GGE matrix (ge.eff) and means for main effects
+  int.mean <- unstack(tab, form = emmean ~ envir)
+  rownames(int.mean) <- unique(tab$variety)
   
-  ## 6 - Results
-  result <- list(
-  yield_means=t(means.yield), GE_effect=ge.eff, "GGE_Sum of Squares"=GGE.SS, 
-  GGE_summary = GGE.table, environment_scores=E, "genotype_scores"=G, "genotype_means"=means.gen,
-  "environment_means"=means.env)
-  class(result) <- "GGEobject"
-  cat(paste("Result of GGE Analysis", "\n", "\n"))
-	cat(paste("Environment Scores", "\n"))
-	print(E)
-	cat(paste("\n","Genotype Scores", "\n"))
-	print(G)
-	return(invisible(result))
-}
-
-GGE<-function(yield, genotype, envir, block, PC=2, scale=0.5){
+  ge.eff <- as.data.frame(scale(int.mean, center=T, scale=F))
   
-  variety <- genotype
-  ## 1 - Descriptive statistics
-  overall.mean<-mean(yield)
-  envir.mean<-tapply(yield,envir,mean)
-  var.mean<-tapply(yield,variety,mean)  
-  int.mean<-tapply(yield,list(variety,envir),mean)
-  envir.num<-length(envir.mean)
-  var.num<-length(var.mean)
+  suppressWarnings(suppressMessages({ 
+    overall.mean <- as.data.frame(emmeans(add.anova, ~1))$emmean
+    envir.mean <- as.data.frame(emmeans::emmeans(add.anova, ~envir))$emmean
+    var.mean <- as.data.frame(emmeans::emmeans(add.anova, ~variety))$emmean
+  }))
+  names(var.mean) <- rownames(int.mean)
+  names(envir.mean) <- colnames(int.mean)
+  envir.num <- length(envir.mean)
+  var.num <- length(var.mean)
   
-  ## 2 - ANOVA (additive model) and table of GE effects
-  variety<-factor(variety)
-  envir<-factor(envir)
-  block<-factor(block)  
-  add.anova<-aov(yield~envir+block%in%envir+variety+envir:variety)
-  add.anova.residual.SS<-deviance(add.anova)
-  add.anova.residual.DF<-add.anova$df.residual
-  add.anova.residual.MS<-add.anova.residual.SS/add.anova.residual.DF
-  anova.table<-summary(add.anova)
-  row.names(anova.table[[1]])<-c("Environments","Genotypes","Blocks(Environments)","Environments x Genotypes", "Residuals")
-  ge.anova<-aov(yield~envir+envir:variety)
-  ge.eff<-model.tables(ge.anova,type="effects",cterms="envir:variety")$tables$"envir:variety"
-  ge.eff <- t(ge.eff)
   
-  ## 3 - SVD
+## 2 - Variance partitioning (additive model)
+if(!unreplicated) tab <- anova(add.anova) else tab <- NULL
+  
+## 3 - SVD
+  scale <- 0.5
   dec <- svd(ge.eff, nu = PC, nv = PC)
   if (PC > 1){ 
     D <- diag(dec$d[1:PC]^scale)
@@ -100,96 +94,57 @@ GGE<-function(yield, genotype, envir, block, PC=2, scale=0.5){
   } else {
     D <- dec$d[1:PC]^scale
     Dbis <- dec$d[1:PC]^(1-scale)
-    
   }
+  G<-dec$u %*% D
+  E<-dec$v %*% Dbis
   
-  G<-dec$u%*%D
-  E<-dec$v%*%Dbis
+  Ecolnumb <- c(1:PC)
+  Ecolnames <- paste("PC", Ecolnumb, sep = "")
+  dimnames(E) <- list(levels(envir), Ecolnames)
+  dimnames(G) <- list(levels(variety), Ecolnames)
   
-  Ecolnumb<-c(1:PC)
-  Ecolnames<-paste("PC",Ecolnumb,sep="")
-  dimnames(E)<-list(levels(envir),Ecolnames)
-  dimnames(G)<-list(levels(variety),Ecolnames)
- 
-  ## 4 - Singular values and significance of PCs  
-  svalues<-dec$d
-  PC.n<-c(1:length(svalues))
-  PC.SS<-svalues^2
-  percSS<-PC.SS/sum(PC.SS)*100
-  GGE.table<-data.frame("PC"=PC.n,"Singular_value"=svalues,"PC_SS"=PC.SS, "Perc_of_Total_SS"=percSS)
-  numblock<-length(levels(block))
-  GGE.SS<-(t(as.vector(ge.eff))%*%as.vector(ge.eff))*numblock
+## 4 - Singular values and significance of PCs  
+  svalues <- dec$d
+  PC.n <- c(1:length(svalues))
+  PC.SS <- svalues^2
+  percSS <- PC.SS/sum(PC.SS)*100
+  GGE.table <- data.frame("PC"=PC.n,"Singular_value"=svalues,"PC_SS"=PC.SS, "Perc_of_Total_SS"=percSS)
+  numblock <-length(levels(block))
+  # GGE.SS <- (t(as.vector(ge.eff)) %*% as.vector(ge.eff)) * numblock
+  GGE.SS <- sum(ge.eff^2) * numblock
   
-  ## 5 - Results
+  # int.SS <- sum(int.eff^2)
+  # PC.SS <-  (dec$d[1:PC]^2) # * numblock 
+  # PC.DF <- var.num + envir.num - 1 - 2*Ecolnumb
+  # residual.SS <- int.SS - sum(PC.SS)
+  # residual.DF <- ((var.num - 1)*(envir.num - 1)) - sum(PC.DF)
+  # PC.SS[PC + 1] <- residual.SS  
+  # PC.DF[PC + 1] <- residual.DF
+  # MS <- PC.SS/PC.DF
+  
+  
+  # if(balanced | externalError){
+  #   Fcomp <- MS/MSE
+  #   probab <- pf(Fcomp, PC.DF, dfr, lower.tail = FALSE)
+  #   percSS <- PC.SS/int.SS
+  #   rowlab <- c(Ecolnames, "Residuals")
+  #   mult.anova <- data.frame(Effect = rowlab, SS = PC.SS, DF = PC.DF, MS = MS, F = Fcomp, Prob. = probab, "Perc_of_Total_SS"=percSS)
+  # } else {
+  #   percSS <- PC.SS/int.SS
+  #   rowlab <- c(Ecolnames, "Residuals")
+  #   mult.anova <- data.frame(Effect = rowlab, SS = PC.SS, DF = PC.DF, MS = MS, "Perc_of_Total_SS"=percSS)
+  #   MSE <- NULL
+  #   dfr <- NULL
+  # }
+  # 
+  # if(PC >=2) stability <- sqrt((PC.SS[1]/PC.SS[2]*G[,1])^2+G[,2]^2) else stability = NA
+  
+## 6 - Results  
   result <- list(genotype_means=var.mean, environment_means=envir.mean, interaction_means=int.mean, 
-  GE_effect=ge.eff, additive_ANOVA=anova.table, "GGE_Sum of Squares"=GGE.SS, 
-  GGE_summary = GGE.table, environment_scores=E, "genotype_scores"=G)
+      GE_effect=ge.eff, additive_ANOVA = tab, "GGE_Sum of Squares"=GGE.SS, 
+      GGE_summary = GGE.table, environment_scores=E, "genotype_scores"=G)
   class(result) <- "GGEobject"
-    cat(paste("Result of GGE Analysis", "\n", "\n"))
-	cat(paste("Environment Scores", "\n"))
-	print(E)
-	cat(paste("\n","Genotype Scores", "\n"))
-	print(G)
-	return(invisible(result))
-}
-
-GGE_old<-function(variety,envir,block,yield,PC=2){
-
-  ## 1 - Descriptive statistics
-  overall.mean<-mean(yield)
-  envir.mean<-tapply(yield,envir,mean)
-  var.mean<-tapply(yield,variety,mean)  
-  int.mean<-tapply(yield,list(variety,envir),mean)
-  envir.num<-length(envir.mean)
-  var.num<-length(var.mean)
-  
-  ## 2 - ANOVA (additive model) and table of GE effects
-  variety<-factor(variety)
-  envir<-factor(envir)
-  block<-factor(block)  
-  add.anova<-aov(yield~envir+block%in%envir+variety+envir:variety)
-  add.anova.residual.SS<-deviance(add.anova)
-  add.anova.residual.DF<-add.anova$df.residual
-  add.anova.residual.MS<-add.anova.residual.SS/add.anova.residual.DF
-  anova.table<-summary(add.anova)
-  row.names(anova.table[[1]])<-c("Environments","Genotypes","Blocks(Environments)","Environments x Genotypes", "Residuals")
-  ge.anova<-aov(yield~envir+envir:variety)
-  ge.eff<-model.tables(ge.anova,type="effects",cterms="envir:variety")$tables$"envir:variety"
-  
-  ## 3 - SVD
-  dec <- svd(ge.eff, nu = PC, nv = PC)
-  if (PC > 1){ 
-    D <- diag(dec$d[1:PC]) 
-  } else {
-    D <- dec$d[1:PC]
-  }
-  E<-dec$u%*%sqrt(D)
-  G<-dec$v%*%sqrt(D)
-  Ecolnumb<-c(1:PC)
-  Ecolnames<-paste("PC",Ecolnumb,sep="")
-  dimnames(E)<-list(levels(envir),Ecolnames)
-  dimnames(G)<-list(levels(variety),Ecolnames)
- 
-  ## 4 - Singular values and significance of PCs  
-  svalues<-dec$d
-  PC.n<-c(1:length(svalues))
-  PC.SS<-svalues^2
-  percSS<-PC.SS/sum(PC.SS)*100
-  GGE.table<-data.frame("PC"=PC.n,"Singular_value"=svalues,"PC_SS"=PC.SS, "Perc_of_Total_SS"=percSS)
-  numblock<-length(levels(block))
-  GGE.SS<-(t(as.vector(ge.eff))%*%as.vector(ge.eff))*numblock
-  
-  ## 5 - GGE Biplot
-  plot(1,type='n',xlim=range(c(E[,1],G[,1])),ylim=range(c(E[,2],G[,2])),xlab="PC 1",ylab="PC 2")
-  points(E[,1],E[,2],"n",col="red",lwd=5)
-  text(E[,1],E[,2],labels=row.names(E),adj=c(0.5,0.5),col="red")
-  points(G[,1],G[,2], "n", col="blue",lwd=5)
-  text(G[,1],G[,2],labels=row.names(G),adj=c(0.5,0.5),col="blue")
-
-  ## 6 - Results
-  result <- list("Genotype_means"=var.mean, "Environment_means"=envir.mean, "Interaction_means"=int.mean, 
-  "GE_effect"=ge.eff, "Additive_ANOVA"=anova.table, "GGE_Sum of Squares"=GGE.SS, GGE_summary = GGE.table, Environment_scores=E, "Genotype_scores"=G)
-  class(result) <- "GGEobject"
-  return(result)
+     
+  return(invisible(result))
 }
 

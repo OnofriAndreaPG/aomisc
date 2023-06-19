@@ -1,7 +1,7 @@
 \name{CVA}
 \alias{CVA}
 %- Also NEED an '\alias' for EACH other topic documented here.
-\title{ ~~function to do ... ~~ }
+\title{ Canonical variate analysis for multienvironment and multitrait genotype experiments}
 \description{
   This function performs a canonical variate analysis
 }
