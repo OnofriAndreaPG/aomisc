@@ -43,7 +43,7 @@ export(angularTransform, ma,
        summary.nlsbc,
        gnlht, compCoefs, pairComp, deviance.drc,
        ## meta-analysis
-       getTau, myMet
+       # getTau, # myMet,
        ## Other
        tukeyMat
        )
