@@ -1,5 +1,5 @@
 CVA <- function(dataset, groups){
-## Performs linear discriminant analysis (date: 15/11/19)
+## Performs canonical variate analysis (date: 15/11/19)
 ## dataset is a multidimensional data.frame of observations
 ## groups is a vector coding for groupings
 ## This part performs a standardisation of data	
@@ -112,7 +112,11 @@ CVA <- function(dataset, groups){
 	   within <- cor(medie,VARCANresidui)
 
   ## RESULTS
-	list("eigenvalues" = A, 
+	list("Total deviances-codeviances" = Ts,
+	     "Between-groups deviances-codeviances" = B,
+	     "Within-groups deviances-codeviances" = W,
+	     "B/W" = WB,
+	     "eigenvalues" = A, 
 	     "eigenvectors.c" = V1c,
 	     "eigenvectors.s" = V1,
 	     "Proportion" = prop, 
