@@ -25,8 +25,7 @@ CVA(dataset, groups)
 }
 \references{ ~put references to the literature/web site here ~ }
 \author{ ~~who you are~~ }
-\note{ ~~further notes~~ 
-}
+\note{ ~~further notes~~ }
 \seealso{ ~~objects to See Also as \code{\link{help}}, ~~~ }
 \examples{
 }

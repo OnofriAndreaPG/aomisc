@@ -87,6 +87,7 @@ CVA <- function(dataset, groups){
 	   medie <- aov(dataset.standardizzata~groups-1)$coefficients
      scores <- medie%*%coefst
 
+     
  ## Classification functions
      medie <- aov(as.matrix(dataset) ~ groups - 1)$coefficients
      Vcov <- Wc/(numdati - numclasses)
