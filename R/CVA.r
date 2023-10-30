@@ -1,4 +1,4 @@
-CVA <- function(dataset, groups, scale = TRUE){
+CVA <- function(dataset, groups, scale = TRUE, constraint = 3){
 ## Performs canonical variate analysis (date: 15/11/19)
 ## dataset is a multidimensional data.frame of observations
 ## groups is a vector coding for groupings
@@ -36,6 +36,7 @@ CVA <- function(dataset, groups, scale = TRUE){
   	
   	# Eventuale tandardizzazione e calcolo dei coefficienti canonici
   	dataset.input <- scale(dataset, center = TRUE, scale = scale)
+  	# print(dataset.input)
   	
 	  maovst <- manova(dataset.input ~ groups)
   	fitted <- maovst$fitted
@@ -49,7 +50,9 @@ CVA <- function(dataset, groups, scale = TRUE){
   	A <- as.numeric(eigen(WB)$values[1:numcanonical])
   	V1 <- as.numeric(eigen(WB)$vectors[,1:numcanonical])
   	V1 <- matrix(V1, numcolonne, numcanonical)
+  	
 	  VARCAN1 <- dataset.input %*% V1
+	  devstVarCan <- apply(VARCAN1, 2, sd)
 	  if(length(VARCAN1[1,]) > 1) {
 	       maovst2 <- manova(VARCAN1 ~ groups)
 	  } else {
@@ -58,8 +61,20 @@ CVA <- function(dataset, groups, scale = TRUE){
 	  varcovar <- t(maovst2$residuals)%*%maovst2$residuals
 	  i <- array(c(1:numcanonical,1:numcanonical),dim=c(numcanonical,2))
 		dev1 <- varcovar[i]
-		devst1 <- sqrt(dev1/(numdati-length(levels(groups))))
-		scaling <- 1/devst1
+		devst1 <- sqrt(dev1/(numdati - length(levels(groups))))
+		if(constraint == 1){
+		  # unit total sd
+		  scaling <- 1/devstVarCan
+		} else if(constraint == 2) {
+		  # unit total norm
+		  scaling <- 1/(devstVarCan * sqrt(numdati - 1))
+		} else if(constraint == 3) {
+		  # unit within sd
+		  scaling <- 1/devst1
+		} else {
+		  # unit within norm
+		  scaling <- 1/(devst1 * sqrt(numdati - length(levels(groups))))
+		}
 		# print(scaling)
 		identita <- matrix(c(0),numcanonical,numcanonical)
 		identita[i] <- scaling
@@ -86,19 +101,19 @@ CVA <- function(dataset, groups, scale = TRUE){
 
  ## scores of centroids
 	   medie <- aov(dataset.input ~ groups-1)$coefficients
-     scores <- medie%*%coefst
+     scores <- medie %*% coefst
      rownames(scores) <- gsub("groups", "", rownames(scores))
      
  ## Classification functions
-     # medie <- aov(as.matrix(dataset) ~ groups - 1)$coefficients
-     # Vcov <- W/(numdati - numclasses)
-     # constants <- diag(- 0.5 * medie %*% solve(Vcov) %*% t(medie) )
-     # class.fun <- cbind(constants, t(solve(Vcov) %*% t(medie)) )
-     # 
-     # matDati <- as.matrix( cbind(rep(1,numdati), dataset))
-     # matCoef <- as.matrix( class.fun )
-     # classVal <- matDati %*% t(matCoef)
-     # class <- levels(groups)[apply(classVal, 1, function(x) which.max(x))]
+     medie <- aov(as.matrix(dataset.input) ~ groups - 1)$coefficients
+     Vcov <- W/(numdati - numclasses)
+     constants <- diag(- 0.5 * medie %*% solve(Vcov) %*% t(medie) )
+     class.fun <- cbind(constants, t(solve(Vcov) %*% t(medie)) )
+      
+     matDati <- as.matrix( cbind(rep(1,numdati), dataset.input))
+     matCoef <- as.matrix( class.fun )
+     classVal <- matDati %*% t(matCoef)
+     class <- levels(groups)[apply(classVal, 1, function(x) which.max(x))]
     
 
   ## canonical structure
@@ -130,13 +145,14 @@ CVA <- function(dataset, groups, scale = TRUE){
 	     "coefficients"=coefst, 
 	     # "Raw.coefficients"=raw,
 	     "scores" = VARCAN,
-	     "centroids"=scores, 
+	     "centroids"=scores,
+	     # Canonical structure
 	     "Total.structure"=total, 
 	     "Between.structure"=between, 
-	     "Within.structure" = within
-	     # "Class.fun" = class.fun,
-	     # "Class.val" = classVal,
-	     # "Class" = class
+	     "Within.structure" = within,
+	     "Class.fun" = class.fun,
+	     "Class.val" = classVal,
+	     "Class" = class
 	     )
 	
 }
