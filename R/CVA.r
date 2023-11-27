@@ -115,9 +115,12 @@ CVA <- function(dataset, groups, scale = TRUE, constraint = 3){
      classVal <- matDati %*% t(matCoef)
      class <- levels(groups)[apply(classVal, 1, function(x) which.max(x))]
     
-
+  ## canonical scores
+     VARCAN <- dataset.input%*%coefst
+     row.names(VARCAN) <- groups
+	   
+	   
   ## canonical structure
-	   VARCAN <- dataset.input%*%coefst
 	   total <- cor(dataset, VARCAN)
 
 	   medie <- aov(dataset.input~groups-1)$fitted
