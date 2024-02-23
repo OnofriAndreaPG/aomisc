@@ -38,7 +38,7 @@ Vector of distinct characters (or character strings) used to connect levels that
 }
 \value{
 Returns a list with the following elements
-\item{pairs}{A dataframe of pairwise comparisons}
+\item{Pairs}{A dataframe of pairwise comparisons}
 \item{Letters}{A dataframe with compact letter display}
 }
 \references{
@@ -58,13 +58,14 @@ data(metamitron)
 modNlin <- nls(Conc ~ A[Herbicide] * exp(-k[Herbicide] * Time), 
                start=list(A=rep(100, 4), k=rep(0.06, 4)), 
                data=metamitron)
-summary(modNlin)
+tab <- summary(modNlin)
+tab
 
 # Retreive infos and make comparisons
 coefs <- coef(modNlin)[5:8] 
 vcovMat <- vcov(modNlin)[5:8, 5:8]
 cp <- pairComp(coefs, vcovMat, dfr = tab$df[2], 
-               adjust = "none", reversed = F)
+               adjust = "none", reversed = FALSE)
 cp$Letters
 cp$pairs
 }

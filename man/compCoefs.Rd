@@ -1,13 +1,14 @@
 \name{compCoefs}
 \alias{compCoefs}
 \title{
-Pairwise comparisons of model parameters
+Pairwise comparisons of model parameters for nls objects
 }
 \description{
 With models containing covariates and factors, we may be interested in fitting nonlinear regression models in a groupwise fashion, according to the levels of the experimental factor(s). This function permits pairwise comparison procedures of model parameters; parameters can be compared by means of either ratios or differences. It is based on the function 'compParm' in the package 'drc'.
 }
 \usage{
-compCoefs(object, parameterNames, operator = "-", display = "pairwise", adjust = "holm", reverse = FALSE, level = 0.05)
+compCoefs(object, parameterNames, operator = "-", display = "pairwise",
+          adjust = "holm", reversed = FALSE, level = 0.05, Letters = c(letters, LETTERS))
 }
 \arguments{
   \item{object}{ an object of class 'nls' }
@@ -15,7 +16,7 @@ compCoefs(object, parameterNames, operator = "-", display = "pairwise", adjust =
   \item{operator}{a character. If equal to "/" parameter ratios are compared. If equal to "-" (default) parameter differences are compared.}
   \item{display}{a character. If equal to "pairwise" (default), pairwise comparisons are displayed. Otherwise, a compact letter display is returned, according to the argument in 'level'.}
   \item{adjust}{A multiplicity adjustment method as in p.adjust. Defaults to "holm".}
-  \item{reverse}{logical. Should the order of means/letters be decreasing? Defaults to FALSE, which means that the means and letters are in increasing order.}
+  \item{reversed}{logical. Should the order of means/letters be decreasing? Defaults to FALSE, which means that the means and letters are in increasing order.}
   \item{level}{Protection level for compact letter display}
   \item{Letters}{Vector of distinct characters (or character strings) used to connect levels that are not significantly different. They should be recogizable when concatenated. The default behaviour is to use the small letters, followed by the capital letters. See help for 'multcompView::multcompLetters()' for futher detail)}
 }

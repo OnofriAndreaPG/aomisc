@@ -1,14 +1,15 @@
-\name{anova.aovList}
-\alias{anova.aovList}
+\name{anova.aovlist}
+\alias{anova.aovlist}
 \title{Prints an ANOVA table for an 'aovList' object}
 \usage{
-\method{anova}{aovList}(object)
+\method{anova}{aovlist}(object, ...)
 }
 \arguments{
   \item{object}{An object of class \code{"aovList"}}
+  \item{...}{Other additional arguments}
 }
 \description{
-  A wrapper for the 'summary' method for objects of class 'aovList'.
+  A wrapper for the 'summary' method for objects of class 'aovlist'.
 }
 \value{
   An object of class \code{"summary.aovlist"}. It is a list (one object 
@@ -21,12 +22,12 @@
   \code{\link{TukeyHSD}}
 }
 \examples{
-# A spli-plot design
+# A split-plot design
 rm(list=ls())
 data(oats)
 oats.aov <- aov(Y ~ N*V + Error(B/V), data = oats)
 anova(oats.aov)
-TukeyHSD(oats.aov)
+emmeans::emmeans(oats.aov, ~N)
 }
 \keyword{models}
 \keyword{regression}

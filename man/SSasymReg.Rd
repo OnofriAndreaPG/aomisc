@@ -13,11 +13,15 @@ These functions provide the asymptotic regression model (asymReg), the asymptoti
 \usage{
   asymReg.fun(predictor, init, m, plateau)
   NLS.asymReg(predictor, init, m, plateau)
-  DRC.asymReg(fixed = c(NA, NA, NA), names = c("init", "m", "plateau"), ...)
-  DRC.SSasymp(fixed = c(NA, NA, NA), names = c("Asym", "R0", "lrc"), ...)
+  DRC.asymReg(fixed = c(NA, NA, NA), names = c("init", "m", "plateau"))
+  DRC.SSasymp(fixed = c(NA, NA, NA), names = c("Asym", "R0", "lrc"))
 }
 
 \arguments{
+  \item{predictor}{a numeric vector of values at which to evaluate the model}
+\item{init}{model parameter}
+\item{m}{model parameter}
+\item{plateau}{model parameter}
  \item{fixed}{numeric vector. Specifies which parameters are fixed and at what value they are fixed. NAs for parameter that are not fixed.}
  \item{names}{a vector of character strings giving the names of the parameters. The default is reasonable.}
 }
@@ -44,8 +48,6 @@ Onofri, A. (2020). A collection of self-starters for nonlinear regression in R. 
 
 \note{DRC.asymReg and DRC.SSasymp are for use with the function \code{\link{drm}}.}
 
-\seealso{}
-
 \examples{
 X <- c(1, 3, 5, 7, 9, 11, 13, 20)
 Y <- c(8.22, 14.0, 17.2, 16.9, 19.2, 19.6, 19.4, 19.6)
@@ -63,4 +65,3 @@ summary(model2)
 
 \keyword{models}
 \keyword{nonlinear}
-\concept{}

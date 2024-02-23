@@ -10,13 +10,13 @@
 
 \usage{
   
-  \method{plot}{nls}(fm, type = "means", 
+  \method{plot}{nls}(x, type = "means", 
                      xlim = NULL, res = 100, 
                      which = 3, ...)
 }
 
 \arguments{
-  \item{fm}{an object of class 'nls'}
+  \item{x}{an object of class 'nls'}
   \item{type}{it can be either "means" or "all". In the first case, the group means are plotted for the third graph. It is iìonly used when which = 3}
   \item{xlim}{The limits for the x-axis (x1, x2)}
   \item{res}{For 'which = 3', it is the resolution of the fitted line}

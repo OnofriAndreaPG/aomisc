@@ -9,8 +9,8 @@ W2.4.init <- function(mCall, LHS, data, ...) {
   xy <- sortedXyData(mCall[["predictor"]], LHS, data)
   x <-  xy[, "x"]; y <- xy[, "y"]
   
-  x <- brassica$Dose
-  y <- brassica$FW
+  # x <- brassica$Dose
+  # y <- brassica$FW
   d <- max(y) * 1.05
   c <- min(y) * 0.90
   

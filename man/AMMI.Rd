@@ -7,7 +7,8 @@ AMMI analysis for multienvironment genotype experiments
 This function performs the AMMI (Addittive Main effects Multiplicative Interaction) analysis, according to Zobel et al (1988). The function has been described in Onofri and Ciriciofolo (2007).
 }
 \usage{
-AMMI(yield, genotype, environment, block, PC = 2)
+AMMI(yield, genotype, environment, block = NULL, PC = 2,
+     MSE = NULL, dfr = NULL)
 }
 \arguments{
   \item{yield}{a vector containing yield levels}
@@ -15,6 +16,8 @@ AMMI(yield, genotype, environment, block, PC = 2)
   \item{environment}{a vector containing environment codings}
   \item{block}{a vector containing block codes for each environment}
   \item{PC}{the number of PCs that one wants to extract}
+  \item{MSE}{Mean Squared Error}
+  \item{dfr}{Residual Degrees of Freedom}
 }
 \value{ Returns a list of class 'AMMIobject' with the following components
     \item{genotype_means}{The overall least squares genotype means}

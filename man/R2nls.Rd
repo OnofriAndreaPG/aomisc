@@ -15,9 +15,6 @@ R2nls(object)
   \item{object }{A nonlinear regression fit object. It can be either a 'nls' fit or 'drm' fit.
   }
 }
-\details{
-%%  ~~ If necessary, more details than the description above ~~
-}
 \value{
   A list with the following slots:
   \item{R2 }{Traditional coefficient of determination, calculated as the ratio of model SS to total SS. Formula as in Schabenberger and Pierce, 5.23, pag 211.}

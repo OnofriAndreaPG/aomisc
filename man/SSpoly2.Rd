@@ -12,10 +12,11 @@ These functions provide the simple polynomial (second order) regression model (p
 \usage{
   poly2.fun(predictor, a, b, c)
   NLS.poly2(predictor, a, b, c)
-  DRC.linear(fixed = c(NA, NA, NA), names = c("a", "b", "c"), ...)
+  DRC.poly2(fixed = c(NA, NA, NA), names = c("a", "b", "c"))
 }
 
 \arguments{
+\item{predictor}{a numeric vector of values at which to evaluate the model}
  \item{a}{numeric. The response when the predictor is equal to 0.}
  \item{b}{numeric. The slope at X = 0}
  \item{c}{numeric. Regression parameter}

@@ -24,29 +24,16 @@ check.hom(obj, var)
 \item{aovtable}{a summary table for the LRT}
 \item{modHet}{the gls object containing the heteroscedastic fit}
 }
-\references{
-%% ~put references to the literature/web site here ~
-}
 \author{
 Andrea Onofri
 }
 
 \examples{
-##---- Should be DIRECTLY executable !! ----
-##-- ==>  Define data, use random,
-##--	or do  help(data=index)  for the standard data sets.
-
-## The function is currently defined as
-function (x) 
-{
-  }
+fileName <- "https://www.casaonofri.it/_datasets/FGP_rape.csv"
+library(aomisc)
+dataset <- read.csv(fileName)
+dataset[,1:5] <- lapply(dataset[,1:5], factor)
+mod <- lm(FGP ~ Genotype * Run, data = dataset)
+check <- check.hom(mod, Run)
+check$aovtable
 }
-% Add one or more standard keywords, see file 'KEYWORDS' in the
-% R documentation directory (show via RShowDoc("KEYWORDS")):
-% \keyword{ ~kwd1 }
-% \keyword{ ~kwd2 }
-% Use only one keyword per line.
-% For non-standard keywords, use \concept instead of \keyword:
-% \concept{ ~cpt1 }
-% \concept{ ~cpt2 }
-% Use only one concept per line.

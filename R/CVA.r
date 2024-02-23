@@ -144,15 +144,15 @@ CVA <- function(dataset, groups, scale = TRUE, constraint = 3){
 	     "proportion" = prop,
 	     # CANONICAL ANALYSES
 	     "correlation" = cancor, 
-	     "Squared.canonical.correlation" = cancor2, 
+	     "squared.canonical.correlation" = cancor2, 
 	     "coefficients"=coefst, 
 	     # "Raw.coefficients"=raw,
 	     "scores" = VARCAN,
 	     "centroids"=scores,
 	     # Canonical structure
-	     "Total.structure"=total, 
-	     "Between.structure"=between, 
-	     "Within.structure" = within,
+	     "total.structure"=total, 
+	     "between.structure"=between, 
+	     "within.structure" = within,
 	     "Class.fun" = class.fun,
 	     "Class.val" = classVal,
 	     "Class" = class

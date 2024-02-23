@@ -4,57 +4,49 @@
 Linear/nonlinear functions of model parameters
 }
 \description{
-This function calculates linear/nonlinear functions of model parameters and returns an estimate with standard errors.
+This function calculates linear/nonlinear functions of model parameters and returns their estimates with delta standard errors.
 }
 \usage{
 ## S3 method for class 'numeric'
-gnlht(coefs, func, const, vcov.,
-            parameterNames, dfr)
+gnlht(object, func, const, vcov.,
+            parameterNames, dfr, ...)
 ## S3 method for class 'lm'
-gnlht(model, func, const, ...)
+gnlht(object, func, const, vcov.,
+            parameterNames, dfr, ...)
 ## S3 method for class 'nls'
-gnlht(model, func, const, ...)
+gnlht(object, func, const, vcov.,
+            parameterNames, dfr, ...)
 ## S3 method for class 'lme'
-gnlht(model, func, const, ...)
+gnlht(object, func, const, vcov.,
+            parameterNames, dfr, ...)
 ## S3 method for class 'nlme'
-gnlht(model, func, const, ...)
+gnlht(object, func, const, vcov.,
+            parameterNames, dfr, ...)
 ## S3 method for class 'drc'
-gnlht(model, func, const, ...)
+gnlht(object, func, const, vcov.,
+            parameterNames, dfr, ...)
 }
 \arguments{
-\item{coefs}{a numeric vector}
-\item{vcov.}{a variance-covariance matrix, or a function to calculate it}
-\item{parameterNames}{a character vector with namings for 'coefs'}
-\item{dfr}{degrees of freedom}
-\item{model}{a model object for which there are coef and vcov methods, and for which the named coefficient vector returned by coef is asymptotically normally distributed with asymptotic covariance matrix returned by vcov.}
-  \item{model}{a model object for which there are coef and vcov methods, and for which the named coefficient vector returned by coef is asymptotically normally distributed with asymptotic covariance matrix returned by vcov.}
-  \item{funList}{a dataframe with one column, listing the  quoted strings that are the functions of the parameter estimates to be evaluated}
-  \item{constList}{If necessary, a dataframe whose columns are the constants to be used in the calculations above. For each row of this dataframe, the functions above are evaluated}
-  }
+\item{object}{a named vector of parameter estimates, or a model object for which there are coef and vcov methods. The estimates are asymptotically normally distributed with asymptotic covariance matrix returned by vcov. or passed as an argument}
+\item{func}{a list of functions or quoted strings that are the functions of the parameter estimates to be evaluated}
+\item{const}{If necessary, a dataframe whose columns are the constants to be used in the calculations above. For each row of this dataframe, the functions above are evaluated}
+\item{vcov.}{a variance-covariance matrix, or a function to calculate it from the model object}
+\item{parameterNames}{a character vector with namings for the parameters to be combined}
+\item{dfr}{number of degrees of freedom}
+\item{...}{Additional arguments}
+}
+
+
 \details{
-%%  ~~ If necessary, more details than the description above ~~
+Methods are given for several types of model fitting objects (lm, nls, lme, nlme, drc), from where model coefficients and a variance-covariance matrix are automatically retrieved. For other cases, a named vector of model parameters and a variance-covariance matrix can be provided as arguments to the 'gnlht()' function.
 }
 \value{
-A data.frame
-}
-\references{
-%% ~put references to the literature/web site here ~
+Returns a data.frame
 }
 \author{
 Andrea Onofri
 }
-\note{
-%%  ~~further notes~~
-}
-
-%% ~Make other sections like Warning with \section{Warning }{....} ~
-
-\seealso{
-%% ~~objects to See Also as \code{\link{help}}, ~~~
-}
 \examples{
-rm(list = ls())
-library(aomisc)
 data(metamitron)
 
 #Fit nls grouped model
@@ -119,9 +111,10 @@ const <- NULL
 medieBack <- gnlht(coefs, func,  vcov. = sigma,
                            parameterNames = pn, dfr = 12)
 medieBack
-emmeans(mod, ~Treat, transform = "response")
+emmeans(mod, ~Treat, regrid = "response")
 }
 % Add one or more standard keywords, see file 'KEYWORDS' in the
 % R documentation directory.
-\keyword{ ~kwd1 }% use one of  RShowDoc("KEYWORDS")
-\keyword{ ~kwd2 }% __ONLY ONE__ keyword per line
+\keyword{ ~nonlinearregression }% use one of  RShowDoc("KEYWORDS")
+\keyword{ ~Delta method }% __ONLY ONE__ keyword per line
+\keyword{ ~Generalised Non-linear contrasts }% __ONLY ONE__ keyword per line

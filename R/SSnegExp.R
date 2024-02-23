@@ -89,7 +89,7 @@ function(fixed = c(NA, NA), names = c("a", "c"))
     ## Defining the first derivative (in x=dose)
     derivx <- function(x, parm)
     {
-      print("qui")
+      # print("qui")
       parmMat <- matrix(parmVec, nrow(parm), numParm, byrow = TRUE)
       parmMat[, notFixed] <- parm
       

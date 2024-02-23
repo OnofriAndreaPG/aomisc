@@ -12,10 +12,13 @@
 \usage{
   expoGrowth.fun(predictor, init, k)
   NLS.expoGrowth(predictor, init, k)
-  DRC.expoGrowth(fixed = c(NA, NA), names = c("init", "k"), ...)
+  DRC.expoGrowth(fixed = c(NA, NA), names = c("init", "k"))
 }
 
 \arguments{
+\item{predictor}{a numeric vector of values at which to evaluate the model.}
+\item{init}{model parameter}
+\item{k}{model parameter}
  \item{fixed}{numeric vector. Specifies which parameters are fixed and at what value they are fixed. NAs for parameter that are not fixed.}
  \item{names}{a vector of character strings giving the names of the parameters. The default is reasonable.}
 }
@@ -39,8 +42,6 @@ Onofri, A. (2020). A collection of self-starters for nonlinear regression in R. 
 
 \note{DRC.expoGrowth is for use with the function \code{\link{drm}}.}
 
-\seealso{}
-
 \examples{
 rm(list=ls())
 set.seed(1234)
@@ -60,4 +61,3 @@ summary(model2)
 
 \keyword{models}
 \keyword{nonlinear}
-\concept{}

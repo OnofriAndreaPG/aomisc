@@ -1,7 +1,7 @@
-plot.nls <- function(fm, type = "means", 
+plot.nls <- function(x, type = "means", 
                      xlim = NULL, res = 100, 
                      which = 3, ...){
-    # fm <- model
+    fm <- x
     if (!inherits(fm, "nls"))
     stop("use only with \"nls\" objects")
   

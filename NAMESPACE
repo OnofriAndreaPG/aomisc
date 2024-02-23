@@ -1,11 +1,26 @@
-importFrom(drc, drm)
-importFrom(utils, tail)
-importFrom(car, deltaMethod)
-importFrom(plyr, ldply, ddply)
-importFrom(multcompView, multcompLetters3)
-import(stats, emmeans)
-export(angularTransform, ma,
-       # Support for nls and drc
+importFrom("drc", "drm", "logistic")
+importFrom("utils", "tail")
+importFrom("car", "deltaMethod")
+importFrom("plyr", "ldply", "ddply")
+importFrom("multcomp", "glht", "adjusted")
+importFrom("multcompView", "multcompLetters3", "multcompLetters")
+importFrom("MASS", "boxcox")
+importFrom("nlme", "gls", "lme", "fixef", "varIdent")
+importFrom("emmeans", "emmeans")
+importFrom("utils","combn", "unstack")
+importFrom("stats", "filter", "NLSstRtAsymptote", "anova", "aov", "as.formula",
+               "coef", "cor", "deviance", "df.residual", "fitted",
+               "formula", "gaussian", "glm", "lm", "logLik", "manova",
+               "nls", "p.adjust", "pchisq", "pf", "predict", "pt",
+               "qchisq", "qqline", "qqnorm", "residuals", "sd",
+               "sortedXyData", "update", "vcov", "weights")
+importFrom("grDevices", "dev.cur", "extendrange")
+importFrom("graphics", "abline", "curve", "par", "points", "segments",
+               "text")
+importFrom("methods", "is")
+
+export(
+  # Support for nls and drc
        linear.fun, NLS.linear, DRC.linear, NLS.linearOrigin,
        poly2.fun, NLS.poly2, DRC.poly2,
        expoGrowth.fun, NLS.expoGrowth, DRC.expoGrowth,
@@ -31,22 +46,22 @@ export(angularTransform, ma,
        lorentz.3.fun, NLS.lorentz.3, DRC.lorentz.3,
        lorentz.4.fun, NLS.lorentz.4, DRC.lorentz.4,
        triangle.fun,
-       JointRegr, JointRegrM,
        # utilities for ANOVA models
-       anova.aovlist, getVarCov.gls, getVarCov.lme,
-       check.hom,
+       anova.aovlist, check.hom,
        # utilities for METs
        AMMI, GGE, CVA, biplot.AMMIobject, biplot.GGEobject, 
-       biplot.polygon,
-       stability.met, summary.met,
+       # biplot.polygon,
+       # JointRegr, JointRegrM,
+       # stability.met, summary.met,
        # Utilities for nonlinear regression
        boxcox.nls, R2nls, plot.nls,
        summary.nlsbc,
        gnlht, compCoefs, pairComp, deviance.drc,
+       compCurves, compCurves.2,
        ## meta-analysis
        # getTau, # myMet,
        ## Other
-       tukeyMat
+       tukeyMat, angularTransform, ma
        )
 
 ## S3 methods

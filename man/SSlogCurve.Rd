@@ -15,10 +15,11 @@ These functions provide the logarithmic model (logCurve) with self-starter for t
   logCurve.fun(predictor, a, b)
   NLS.logCurve(predictor, a, b)
   NLS.logCurveNI(predictor, b)
-  DRC.logCurve(fixed = c(NA, NA), names = c("a", "b"), ...)
+  DRC.logCurve(fixed = c(NA, NA), names = c("a", "b"))
 }
 
 \arguments{
+\item{predictor}{a numeric vector of values at which to evaluate the model.}
 \item{a}{model parameter}
  \item{b}{model parameter}
  \item{fixed}{numeric vector. Specifies which parameters are fixed and at what value they are fixed. NAs for parameter that are not fixed.}
@@ -45,8 +46,6 @@ Onofri, A. (2020). A collection of self-starters for nonlinear regression in R. 
 
 \note{DRC.logCurve() is for use with the function \code{\link{drm}}.}
 
-\seealso{}
-
 \examples{
 X <- c(1,2,4,5,7,12)
 Y <- c(1.97, 2.32, 2.67, 2.71, 2.86, 3.09)
@@ -63,4 +62,3 @@ model <- drm(Y ~ X, fct = DRC.logCurve() )
 
 \keyword{models}
 \keyword{nonlinear}
-\concept{}

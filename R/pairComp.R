@@ -31,8 +31,8 @@ pairComp <- function(parm, vcovMat, nams = NULL, dfr = NULL, adjust = "none",
   gh <- multcomp::glht(pairList, linfct = tukeyMat(parm))
   lett <- cld2(gh, pval = level, adjust = adjust, Letters = Letters)
   letters <- data.frame(Mean = parm, SE = SE, CLD = lett$Letters)
-  returnList = list(pairs = summary(gh, multcomp::adjusted(type = adjust)),
-                    Letters = letters)
+  returnList = list("Pairs" = summary(gh, multcomp::adjusted(type = adjust)),
+                    "Letters" = letters)
   return(returnList)
 }
 
@@ -66,7 +66,7 @@ cld2 <- function(obj, pval = 0.05, adjust = "none", Letters){
   # Serve per ottenere le lettere in modo semplice
   # Passando solo un glht object
   # Modified from multcomp::cld and it is not exposed
-  if(class(obj) != "glht"){
+  if(!inherits(obj, "glht")){
     print("this function is only implemented for glht objects")
     stop()
   }
