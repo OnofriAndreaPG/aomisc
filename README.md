@@ -3,7 +3,7 @@
 Overview
 --------
 
-This package contains several miscellaneous utilities to perform statistical analyses of agricultural data. The package is also used to support to the blog [The broken bridge between biologists and statisticians](https://www.statforbiology.com). 
+This package has been superseded by the new package ‘statforbiology’, that is available on CRAN and contains several miscellaneous utilities to perform statistical analyses of agricultural data. At the moment, ‘aomisc’ only contains a few functions in the development stage, that will be finally moved to ‘statforbiology’ as soon as they are ready for publication
 
 Installation
 ------------
