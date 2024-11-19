@@ -18,9 +18,9 @@ hillCurveInit <- function(mCall, LHS, data, ...) {
   value
 }
 
-NLShillCurve <- selfStart(hillCurveMean, hillCurveInit, parameters=c("a", "b", "c"))
+NLS.hillCurve <- selfStart(hillCurveMean, hillCurveInit, parameters=c("a", "b", "c"))
 
-"hill" <-
+"DRC.hill" <-
   function(fixed = c(NA, NA, NA), names = c("a", "b", "c"))
   {
     ## Checking arguments
@@ -80,7 +80,7 @@ NLShillCurve <- selfStart(hillCurveMean, hillCurveInit, parameters=c("a", "b", "
     invisible(returnList)
   }
 
-"hillMax" <-
+"DRC.hillMax" <-
   function(fixed = c(NA, NA, NA), names = c("a", "b", "c"))
   {
     ## Checking arguments

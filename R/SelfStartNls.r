@@ -1,4 +1,4 @@
-#Negative exponential - Monomulecolar growth
+# Negative exponential - Monomulecolar growth
 monoGrowthMean <- function(predictor, a, b, c) {
                       x <- predictor
                       a - (a - b) * exp (- c * x)
@@ -21,9 +21,9 @@ monoGrowthInit <- function(mCall, LHS, data, ...) {
           value
 }
 
-NLSmonoGrowth <- selfStart(monoGrowthMean, monoGrowthInit, parameters=c("a", "b", "c"))
+NLS.monoGrowth <- selfStart(monoGrowthMean, monoGrowthInit, parameters=c("a", "b", "c"))
 
-#Logistic growth - 1 ###############################
+# Logistic growth - 1 ###############################
 logiGrowth1Mean <- function(predictor, a, b, c) {
                       x <- predictor
                       a / (1 + exp(- b * x + c))
@@ -45,10 +45,10 @@ logiGrowth1Init <- function(mCall, LHS, data, ...) {
           value
 }
 
-NLSlogiGrowth.1 <- selfStart(logiGrowth1Mean, logiGrowth1Init, parameters=c("a", "b", "c"))
+NLS.logiGrowth.1 <- selfStart(logiGrowth1Mean, logiGrowth1Init, parameters=c("a", "b", "c"))
 
 
-#Logistic Growth 2
+# Logistic Growth 2 ###############################
 logiGrowth2Mean <- function(predictor, a, b, c) {
                       x <- predictor
                       a / (1 + b * exp(- c * x))
@@ -71,9 +71,9 @@ logiGrowth2Init <- function(mCall, LHS, data, ...) {
           value
 }
 
-NLSlogiGrowth.2 <- selfStart(logiGrowth2Mean, logiGrowth2Init, parameters=c("a", "b", "c"))
+NLS.logiGrowth.2 <- selfStart(logiGrowth2Mean, logiGrowth2Init, parameters=c("a", "b", "c"))
 
-#Logistic Growth 3
+# Logistic Growth 3 ###############################
 logiGrowth3Mean <- function(predictor, init, m, plateau) {
                       x <- predictor
                       init * plateau / (init + (plateau - init) * exp( - m * x))
@@ -96,9 +96,9 @@ logiGrowth3Init <- function(mCall, LHS, data, ...) {
          value
 }
 
-NLSlogiGrowth.3 <- selfStart(logiGrowth3Mean, logiGrowth3Init, parameters=c("init", "m", "plateau"))
+NLS.logiGrowth.3 <- selfStart(logiGrowth3Mean, logiGrowth3Init, parameters=c("init", "m", "plateau"))
 
-#Logistic Growth 4
+# Logistic Growth 4 ###############################
 logiGrowth4Mean <- function(predictor, t50, m, plateau) {
                       x <- predictor
                       plateau / (1 + exp(- m * (x - t50)))}
@@ -119,9 +119,9 @@ logiGrowth4Init <- function(mCall, LHS, data, ...) {
          value
 }
 
-NLSlogiGrowth.4 <- selfStart(logiGrowth4Mean, logiGrowth4Init, parameters=c("t50", "m", "plateau"))
+NLS.logiGrowth.4 <- selfStart(logiGrowth4Mean, logiGrowth4Init, parameters=c("t50", "m", "plateau"))
 
-#Logistic function 5
+# Logistic function 5  ###############################
 logistic5Mean <- function(predictor, a, b, c, d) {
                       x <- predictor
                       c + (d-c) / (1 + b * exp(a * x))
@@ -144,9 +144,9 @@ logistic5Init <- function(mCall, LHS, data, ...) {
           value
 }
 
-NLSlogistic.1 <- selfStart(logistic5Mean, logistic5Init, parameters=c("a", "b", "c", "d"))
+NLS.logistic.1 <- selfStart(logistic5Mean, logistic5Init, parameters=c("a", "b", "c", "d"))
 
-#Logistic function 6
+#Logistic function 6  ###############################
 logistic6Mean <- function(predictor, a, b) {
                       x <- predictor
                       1 / (1 + b * exp(- a * x))
@@ -167,14 +167,9 @@ logistic6Init <- function(mCall, LHS, data, ...) {
           value
 }
 
-NLSlogistic.2 <- selfStart(logistic6Mean, logistic6Init, parameters=c("a", "b"))
+NLS.logistic.2 <- selfStart(logistic6Mean, logistic6Init, parameters=c("a", "b"))
 
-#LOG_LOGISTIC FUNCTIONS##########################################################
-
-
-#GOMPERTZ MODELS################################################################
-
-#Gompertz growth - 1
+# Gompertz growth - 1 ###############################
 gompGrowth1Mean <- function(predictor, a, m, c) {
                       x <- predictor
                       a * exp( - (m/c) * exp (-c * x))
@@ -198,9 +193,9 @@ gompGrowth1Init <- function(mCall, LHS, data, ...) {
           value
 }
 
-NLSgompGrowth.1 <- selfStart(gompGrowth1Mean, gompGrowth1Init, parameters=c("a", "m", "c"))
+NLS.gompGrowth.1 <- selfStart(gompGrowth1Mean, gompGrowth1Init, parameters=c("a", "m", "c"))
 
-#Gompertz growth 2
+# Gompertz growth 2 ###############################
 gompGrowth2Mean <- function(predictor, a, b, c) {
                       x <- predictor
                       a * exp( - exp (b - c*x))
@@ -224,9 +219,9 @@ gompGrowth2Init <- function(mCall, LHS, data, ...) {
           value
 }
 
-NLSgompGrowth.2 <- selfStart(gompGrowth2Mean, gompGrowth2Init, parameters=c("a", "b", "c"))
+NLS.gompGrowth.2 <- selfStart(gompGrowth2Mean, gompGrowth2Init, parameters=c("a", "b", "c"))
 
-#Gompertz growth - 3
+# Gompertz growth - 3 ###############################
 gompGrowth3Mean <- function(predictor, a, b, c) {
                       x <- predictor
                       a * exp( -b * exp (-c*x))
@@ -250,10 +245,10 @@ gompGrowth3Init <- function(mCall, LHS, data, ...) {
           value
 }
 
-NLSgompGrowth.3 <- selfStart(gompGrowth3Mean, gompGrowth3Init, parameters=c("a", "b", "c"))
+NLS.gompGrowth.3 <- selfStart(gompGrowth3Mean, gompGrowth3Init, parameters=c("a", "b", "c"))
 
 
-#Extreme value
+# Extreme value  ###############################
 extremeValueMean <- function(predictor, a, b, c) {
                       x <- predictor
                       a * (1 - exp( - exp (b - c*x)))
@@ -277,12 +272,9 @@ extremeValueInit <- function(mCall, LHS, data, ...) {
           value
 }
 
-NLSextremeValue <- selfStart(extremeValueMean, extremeValueInit, parameters=c("a", "b", "c"))
+NLS.extremeValue <- selfStart(extremeValueMean, extremeValueInit, parameters=c("a", "b", "c"))
 
-#WEIBULL TYPE MODELS
-#Weibull-1
-
-#Modified Mitscherlich equation for A vs PFD relationships
+# Modified Mitscherlich equation for A vs PFD relationships  ###############################
 AvsPFDMean <- function(predictor, Rd, Amax, Qapp) {
                       x <- predictor
                       Rd+Amax*(1-exp((-Qapp/Amax)*x))
@@ -305,9 +297,9 @@ AvsPFDInit <- function(mCall, LHS, data, ...) {
           value
 }
 
-NLSAvsPFD <- selfStart(AvsPFDMean, AvsPFDInit, parameters=c("Rd", "Amax", "Qapp"))
+NLS.AvsPFD <- selfStart(AvsPFDMean, AvsPFDInit, parameters=c("Rd", "Amax", "Qapp"))
 
-#Inverse polynomial
+# Inverse polynomial  ###############################
 polyInv.3mean <- function(predictor, a, b, c) {
                       x <- predictor
                       1/(a + b*x + c*x^2)
@@ -326,9 +318,9 @@ polyInv.3Init <- function(mCall, LHS, data, ...) {
           value
 }
 
-NLSpolyInv.3 <- selfStart(polyInv.3mean, polyInv.3Init, parameters=c("a", "b", "c"))
+NLS.polyInv.3 <- selfStart(polyInv.3mean, polyInv.3Init, parameters=c("a", "b", "c"))
 
-#Inverse polynomial 2
+# Inverse polynomial 2  ###############################
 polyInv.4mean <- function(predictor, a, b, c) {
                       x <- predictor
                       x/(a + b*x + c*x^2)
@@ -347,5 +339,5 @@ polyInv.4Init <- function(mCall, LHS, data, ...) {
           value
 }
 
-NLSpolyInv.4 <- selfStart(polyInv.4mean, polyInv.4Init, parameters=c("a", "b", "c"))
+NLS.polyInv.4 <- selfStart(polyInv.4mean, polyInv.4Init, parameters=c("a", "b", "c"))
 

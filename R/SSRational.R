@@ -1,11 +1,3 @@
-
-# Exponential growth ####################################################
-EXD.fun <- function(X, c, d, e){
-  c + (d - c) * exp( X / e)  
-}
-
-
-
 #Rational function ################################################
 # Ratio of two polynomials ############################
 Rational.fun <- function(predictor, a, b, c) {
